@@ -110,7 +110,7 @@ export default function App() {
     <View className="bg-black w-full h-full items-center">
       <Text className="text-3xl text-white text-center mt-5">Bus Buzz!!</Text>
       {/* <View className=" bg-blue-50 w-4/5 h-5/6 items-center mt-5"> */}
-      <View className="w-3/4 h-4/5 mt-3 bg-transparent">
+      <View className="w-3/4 h-4/5 mt-3 bg-transparent items-center">
         <Text className="text-xl text-white text-center my-1">
           Quick Search
         </Text>
@@ -125,7 +125,7 @@ export default function App() {
             Count: {count}
           </Text> */}
         <TextInput
-          className="w-full bg-gray-400 my-2 text-white text-center rounded-xl"
+          className="w-3/4 bg-gray-400 my-3 text-white text-center rounded-xl"
           onChangeText={setBusStopNumber}
           value={busStopNumber}
           placeholder="Search with bus stop code..."
@@ -137,17 +137,17 @@ export default function App() {
             setShouldGrab(true);
           }}
         />
-        <ScrollView className="w-full h-1/5 rounded-xl bg-gray-400 my-3 p-2">
+        <ScrollView className="w-full h-1/5 rounded-xl bg-gray-400 mt-7 mb-3 p-2">
           <Text className="text-md text-gray-800">{rawData}</Text>
         </ScrollView>
-        <Button
+        <Button className="my-3"
           title="Clear data"
           onPress={() => {
             setRawData("NULL");
           }}
         />
         <FlatList
-          className="w-full h-1/2 bg-gray-400 mt-3 p-2"
+          className="w-full h-1/2 bg-gray-400 mt-7 p-2 rounded-xl"
           data={busArrivalData}
           renderItem={renderItem}
           keyExtractor={(_, index: number) => index.toString()}
