@@ -1,95 +1,62 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, FlatList, ActivityIndicator } from "react-native";
-import { useMutation, useQueryClient } from "react-query";
-import useBusArrivalQuery from "../hooks/UseBusArrivalQuery";
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  Keyboard,
+  TouchableWithoutFeedback,
+} from "react-native";
 import { StatusBar } from "expo-status-bar";
 import Button from "../components/ui/Button";
+import useBusStopMap from "../hooks/UseBusStopMap";
+import { RouteProp } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../types";
 
-const HomeScreen: React.FC = (/*{navigation}*/) => {
+type HomeScreenProps = {
+  navigation: NativeStackNavigationProp<RootStackParamList, "Home">;
+  route: RouteProp<RootStackParamList, "Home">;
+};
+
+const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   const [busstopId, setBusstopId] = useState<string>("");
   const [shouldGrab, setShouldGrab] = useState<boolean>(false);
-  const queryClient = useQueryClient();
-  
-  useEffect(() => {
-    // console.log("Bus stop ID changed: " + busstopId);
-    if (shouldGrab) {
-      setShouldGrab(false);
-    }
-  }, [busstopId]);
-
-  const { data, isLoading, error, isError } = useBusArrivalQuery(
-    shouldGrab,
-    busstopId,
-    () => {
-      setShouldGrab(false);
-    }
-  );
-
-  const { mutateAsync } = useMutation({
-    mutationFn: async () => {
-      setShouldGrab(true);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries(["busArrivalData"]);
-    },
-  });
-
-  const renderItem = ({ item }: { item: Map<string, string[]> }) => (
-    <View style={{ marginVertical: 10 }}>
-      {Array.from(item.entries()).map(([key, values], index) => (
-        <View className="py-2 px-1 rounded-xl bg-blue-50" key={index}>
-          <Text className="px-2 text-xl p-1">Bus {key}</Text>
-          <Text className="px-2">
-            {values[0]} min, {values[1]} min, {values[2]} min
-          </Text>
-        </View>
-      ))}
-    </View>
-  );
+  const busStopMap = useBusStopMap();
 
   return (
-    <View className="bg-black w-full h-full items-center">
-      <Text className="text-3xl text-white text-center mt-5">Bus Buzz!!</Text>
-      <View className="w-3/4 h-4/5 mt-3 bg-transparent items-center">
-        <Text className="text-xl text-white text-center my-1">
-          Quick Search
-        </Text>
-        <TextInput
-          className="w-3/4 bg-gray-400 my-3 text-white text-center rounded-xl"
-          onChangeText={setBusstopId}
-          value={busstopId}
-          placeholder="Search with bus stop code..."
-          autoFocus={false}
-        ></TextInput>
-        <Button
-          title="Search"
-          onPress={async () => {
-            try {
-              await mutateAsync();
-            } catch (e) {
-              console.error(e);
-            }
-          }}
-        />
-        {isLoading && (
-            <ActivityIndicator className="mt-5" size="large" color="white" />
-          )}
-          {isError && (
-            <Text className="text-white text-md mt-5">{String(error)}</Text>
-          )}
-          {!isLoading && !isError && shouldGrab ? (
-            <FlatList
-              className="w-full h-1/2 bg-transparent mt-7 p-2 rounded-xl"
-              data={data}
-              renderItem={renderItem}
-              keyExtractor={(_, index: number) => index.toString()}
-            />
-          ) : (
-            <></>
-          )}
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View className="bg-slate-800 w-full h-full items-center">
+        <Text className="text-3xl text-white text-center my-5">Bus Buzz!!</Text>
+
+        <View className="w-3/4 h-fit pt-3 pb-5 bg-slate-600 shadow-2xl shadow-white border-2 border-slate-500 items-center rounded-2xl">
+          <Text className="text-lg text-white text-center">Quick Search</Text>
+          <TextInput
+            className="w-56 bg-gray-400 my-3 px-3 text-sm text-white text-center rounded-full focus:border-2 focus:border-slate-200"
+            onChangeText={setBusstopId}
+            value={busstopId}
+            placeholder="Search for bus stop code..."
+            autoFocus={false}
+            inputMode="numeric"
+          ></TextInput>
+          <Button
+            title="Search"
+            onPress={() => {
+              if (busstopId === "") {
+                return;
+              }
+              if (busStopMap && !busStopMap.has(busstopId)) {
+                alert("Invalid bus stop code");
+                return;
+              }
+              setShouldGrab(true);
+              Keyboard.dismiss();
+              navigation.navigate("BusStopDashboard", { id: busstopId });
+            }}
+          />
+        </View>
+        <StatusBar style="inverted" translucent={false} hidden={false} />
       </View>
-      <StatusBar style="inverted" translucent={false} hidden={false} />
-    </View>
+    </TouchableWithoutFeedback>
   );
 };
 

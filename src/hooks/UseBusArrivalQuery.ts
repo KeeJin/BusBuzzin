@@ -21,23 +21,26 @@ const calculateMinutesToArrival = (arrivalTimeString: string): number => {
   return minutesToArrival;
 };
 
-const useBusArrivalQuery = (shouldGrab: boolean, busstopId: string | undefined, callbackFn: () => void) => {
+const useBusArrivalQuery = (
+  shouldGrab: boolean,
+  busstopId: string | undefined,
+  callbackFn: () => void
+) => {
   return useQuery(
     ["busArrivalData", shouldGrab, busstopId],
-    async ({ queryKey }) => {
+    async ({ queryKey }): Promise<any> => {
       const [_, shouldGrab, busstopId] = queryKey;
       if (!busstopId) return; // Don't make the request if busstopId is empty
       if (!shouldGrab) return; // Don't make the request if shouldGrab is false
       const response = await FetchInfoByBusStopCode(busstopId as string);
-      // if (!response.ok) {
-      //   throw new Error("Network response was not ok");
-      // }
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
 
       const data = await response.json();
-      console.log(data);
-
+      // console.log(data);
+      const busServiceData: Map<string, string[]>[] = [];
       if (data["Services"] !== undefined) {
-        let arrivalData: Map<string, Array<string>>[] = [];
         data["Services"].forEach((service: any) => {
           const serviceNo = service["ServiceNo"];
           const nextBusArrival = calculateMinutesToArrival(
@@ -49,7 +52,7 @@ const useBusArrivalQuery = (shouldGrab: boolean, busstopId: string | undefined, 
           const nextBus3Arrival = calculateMinutesToArrival(
             service["NextBus3"]["EstimatedArrival"]
           );
-          arrivalData.push(
+          busServiceData.push(
             new Map([
               [
                 serviceNo,
@@ -62,8 +65,8 @@ const useBusArrivalQuery = (shouldGrab: boolean, busstopId: string | undefined, 
             ])
           );
         });
-        return arrivalData;
       }
+      return busServiceData;
     },
     {
       enabled: !!busstopId, // Only fetch data if busstopId is truthy

@@ -2,7 +2,7 @@ const api_key = process.env.EXPO_PUBLIC_TOKEN as string | undefined;
 if (api_key === undefined) {
   console.log("API key not found.");
 }
-console.log(api_key);
+// console.log(api_key);
 
 const FetchInfoByBusStopCode = async (busstopId: string) => {
   // console.log("Fetching data for bus stop code: " + busstopId);
