@@ -4,19 +4,24 @@ if (api_key === undefined) {
 }
 console.log(api_key);
 
-const FetchInfoByBusStopCode = async (busStopCode: string) => {
+const FetchInfoByBusStopCode = async (busstopId: string) => {
+  // console.log("Fetching data for bus stop code: " + busstopId);
   const response = await fetch(
     "http://datamall2.mytransport.sg/ltaodataservice/BusArrivalv2?BusStopCode=" +
-      busStopCode,
+      busstopId,
     {
       method: "GET",
       headers: {
         AccountKey: api_key as string,
+        "Content-Type": "application/json",
       },
     }
   );
-  const data = await response.json();
-  return data;
+  if (!response.ok) {
+    console.log("Network response was not ok", response.statusText);
+    // throw new Error("Network response was not ok");
+  }
+  return response;
 };
 
 export default FetchInfoByBusStopCode;
