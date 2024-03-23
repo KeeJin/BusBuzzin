@@ -6,7 +6,7 @@ interface ButtonProps extends TouchableOpacityProps {
   title: string;
 }
 
-const Button: React.FC<ButtonProps> = ({ onPress, title }) => (
+const SimpleButton: React.FC<ButtonProps> = ({ onPress, title }) => (
   <TouchableOpacity
     onPress={onPress}
     activeOpacity={0.7}
@@ -16,4 +16,4 @@ const Button: React.FC<ButtonProps> = ({ onPress, title }) => (
   </TouchableOpacity>
 );
 
-export default Button;
+export default SimpleButton;

@@ -2,8 +2,6 @@ import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
-  Keyboard,
-  ActivityIndicator,
   FlatList,
   RefreshControl
 } from "react-native";
@@ -61,6 +59,16 @@ const BusStopDashboardScreen: React.FC<BusStopDashboardScreenProps> = ({
     }
   }, [isLoading, data, isLoading, isError]);
 
+  const renderTimeArrival = (value: string) => {
+    if (Number(value) <= 0) {
+      return "Arriving";
+    } else if (String(value) === "NaN") {
+      return "NA";
+    } else {
+      return value + " min";
+    }
+  }
+
   const renderItem = ({ item }: { item: Map<string, string[]> }) => {
     // console.log("busServiceData: ", busServiceData);
     return (
@@ -72,7 +80,7 @@ const BusStopDashboardScreen: React.FC<BusStopDashboardScreenProps> = ({
               <Text className="px-2">
                 {values.map((value, index) => (
                   <Text key={index}>
-                    {Number(value) <= 0 ? "Arr" : value + " min"}
+                    {renderTimeArrival(value)}
                     {index === values.length - 1 ? "" : ", "}
                   </Text>
                 ))}
@@ -81,11 +89,6 @@ const BusStopDashboardScreen: React.FC<BusStopDashboardScreenProps> = ({
           ))}
       </View>
     );
-  };
-
-  const handlePressAway = () => {
-    // Dismiss the keyboard
-    Keyboard.dismiss();
   };
 
   return (
@@ -100,11 +103,8 @@ const BusStopDashboardScreen: React.FC<BusStopDashboardScreenProps> = ({
         </Text>
       )}
       <View className="w-full h-auto bg-transparent p-2 rounded-xl">
-        {isLoading && (
-          <ActivityIndicator className="mt-5" size="large" color="white" />
-        )}
         {isError && (
-          <Text className="text-white text-md mt-5">{String(error)}</Text>
+          <Text className="text-white text-md mt-5">Error occured. ({String(error)})</Text>
         )}
         {busServiceData ? (
           // <Text className="text-white text-md mt-5">
