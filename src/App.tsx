@@ -1,70 +1,42 @@
 import { registerRootComponent } from "expo";
-import { StatusBar } from "expo-status-bar";
-import {
-  Text, 
-  TextInput,
-  View,
-  ScrollView,
-} from "react-native";
-import React, { useEffect, useState } from "react";
-import Button from "./components/ui/Button";
-import FetchInfoByBusStopCode from "./services/api/FetchInfoByBusStopCode";
+import React from "react";
+import { QueryClient, QueryClientProvider, useMutation } from "react-query";
+import { NavigationContainer } from "@react-navigation/native";
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import HomeScreen from "./pages/HomeScreen";
+import BusStopDashboardScreen from "./pages/BusStopDashboardScreen";
 
-export default function App() {
-  const [count, setCount] = useState<number>(0);
-  const [shouldGrab, setShouldGrab] = useState<boolean>(false);
-  const [busStopNumber, setBusStopNumber] = useState<string>("");
-  const [rawData, setRawData] = useState<string>("NULL");
-  
-  useEffect(() => {
-    if (shouldGrab) {
-      FetchInfoByBusStopCode(busStopNumber)
-        .then((data) => {
-          console.log(JSON.stringify(data, null, 2));
-          setRawData(JSON.stringify(data, null, 2));
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
-        setShouldGrab(false);
-    }
-  }, [shouldGrab]);
-  
+const Stack = createNativeStackNavigator();
+
+const queryClient = new QueryClient();
+
+const App = () => {
+
+  // const Item = (title: string, values: string[]) => (
+  //   <View className="m-1 rounded-xl bg-blue-50">
+  //     <Text className="px-2">{title}</Text>
+  //     <Text className="px-2">
+  //       {values[0]} min, {values[1]} min, {values[2]} min
+  //     </Text>
+  //   </View>
+  // );
+
   return (
-    <View className="bg-red-100 w-full h-full items-center">
-      <Text className="text-2xl text-black text-center my-2">Bus Buzz</Text>
-      <View className=" bg-blue-50 w-4/5 h-5/6 items-center mt-5">
-        <View className="w-1/2 h-3/4 mt-5 bg-transparent">
-          <Text className="text-2xl text-black text-center my-1">Test</Text>
-          <Button
-            title="Click here"
-            onPress={() => {
-              console.log("Button pressed.");
-              setCount(count + 1);
-            }}
-          />
-          <Text className="text-md text-black text-center mt-3">
-            Count: {count}
-          </Text>
-          <TextInput className='w-full bg-gray-400 my-2 text-white' onChangeText={setBusStopNumber} value={busStopNumber}></TextInput>
-          <Button title="Grab data"
-            onPress={() => {
-              setShouldGrab(true);
-            }}
-          />
-          <ScrollView className="w-full h-full bg-gray-200 my-2">
-            <Text className="text-md text-black">{rawData}</Text>
-          </ScrollView>
-          <Button title="Clear data"
-            onPress={() => {
-              setRawData("NULL");
-            }}
-          />
-        </View>
-      </View>
-      <StatusBar style="inverted" translucent={false} hidden={false} />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Home">
+        <Stack.Screen name="Home" component={HomeScreen} options={{headerShown: false}}/>
+        <Stack.Screen name="BusStopDashboard" component={BusStopDashboardScreen} options={{headerShown: false}}/>
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+};
+
+export default function Root() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <App />
+    </QueryClientProvider>
   );
 }
 
-registerRootComponent(App);
+registerRootComponent(Root);

@@ -6,14 +6,14 @@ interface ButtonProps extends TouchableOpacityProps {
   title: string;
 }
 
-const Button: React.FC<ButtonProps> = ({ onPress, title }) => (
+const SimpleButton: React.FC<ButtonProps> = ({ onPress, title }) => (
   <TouchableOpacity
     onPress={onPress}
     activeOpacity={0.7}
-    className="bg-blue-400 py-2 px-3 rounded-2xl"
+    className="bg-blue-400 py-2 w-32 rounded-2xl"
   >
-    <Text className="text-lg text-white text-center">{title}</Text>
+    <Text className="text-md text-white text-center">{title}</Text>
   </TouchableOpacity>
 );
 
-export default Button;
+export default SimpleButton;
