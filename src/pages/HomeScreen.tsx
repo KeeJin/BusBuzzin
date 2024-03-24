@@ -6,10 +6,8 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
 } from "react-native";
-import { StatusBar } from "expo-status-bar";
 import SimpleButton from "../components/ui/SimpleButton";
 import useBusStopMap from "../hooks/UseBusStopMap";
-import { RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../types";
 import TiledButton from "../components/ui/TiledButton";
@@ -70,7 +68,6 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
             navigation.navigate("Settings");
           }} />
         </View>
-        <StatusBar style="auto" translucent={false} hidden={false} />
       </View>
     </TouchableWithoutFeedback>
   );

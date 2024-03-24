@@ -1,4 +1,5 @@
 import { registerRootComponent } from "expo";
+import { StatusBar } from "expo-status-bar";
 import React from "react";
 import { QueryClient, QueryClientProvider, useMutation } from "react-query";
 import { NavigationContainer } from "@react-navigation/native";
@@ -13,17 +14,9 @@ const Stack = createNativeStackNavigator();
 const queryClient = new QueryClient();
 
 const App = () => {
-  // const Item = (title: string, values: string[]) => (
-  //   <View className="m-1 rounded-xl bg-blue-50">
-  //     <Text className="px-2">{title}</Text>
-  //     <Text className="px-2">
-  //       {values[0]} min, {values[1]} min, {values[2]} min
-  //     </Text>
-  //   </View>
-  // );
-
   return (
     <NavigationContainer>
+      <StatusBar style="light" translucent={true} hidden={false} />
       <Stack.Navigator initialRouteName="Home">
         <Stack.Screen
           name="Home"
