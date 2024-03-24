@@ -1,15 +1,5 @@
 import React, { useEffect, useState } from "react";
-
-import {
-  View,
-  Text,
-  FlatList,
-  RefreshControl,
-  TouchableOpacity,
-  Pressable,
-  Vibration,
-} from "react-native";
-import { RouteProp } from "@react-navigation/native";
+import { View, Text, FlatList, Pressable, Vibration } from "react-native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../types";
 import useSavedBusStops from "../hooks/UseSavedBusStops";

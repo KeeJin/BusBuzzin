@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "BusBuzz",
-    "slug": "BusBuzz",
+    "name": "BusBuzzin",
+    "slug": "BusBuzzin",
     "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./src/assets/logo.jpg",
@@ -33,16 +33,11 @@
         "foregroundImage": "./src/assets/logo.jpg",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.keeejinnn.BusBuzz",
+      "package": "com.keeejinnn.BusBuzzin",
       "softwareKeyboardLayoutMode": "pan"
     },
     "web": {
       "favicon": "./src/assets/favicon.png"
-    },
-    "extra": {
-      "eas": {
-        "projectId": "dbeeb825-36a6-47f1-8dc6-b5b901dab42a"
-      }
     },
     "plugins": [
       [
@@ -54,6 +49,10 @@
         }
       ]
     ],
-
+    "extra": {
+      "eas": {
+        "projectId": "163d5063-8c68-48f3-bb70-e54d096cb00d"
+      }
+    }
   }
 }
