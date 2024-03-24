@@ -33,7 +33,8 @@
         "foregroundImage": "./src/assets/logo.jpg",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.keeejinnn.BusBuzz"
+      "package": "com.keeejinnn.BusBuzz",
+      "softwareKeyboardLayoutMode": "pan"
     },
     "web": {
       "favicon": "./src/assets/favicon.png"
