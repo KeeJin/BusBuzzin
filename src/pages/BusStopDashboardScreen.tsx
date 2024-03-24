@@ -149,7 +149,7 @@ const BusStopDashboardScreen: React.FC<BusStopDashboardScreenProps> = ({
   }, [isSaved]);
 
   return (
-    <View className="bg-slate-800 w-full h-screen items-center justify-center px-6">
+    <View className="bg-slate-800 w-full h-full items-center justify-center px-6">
       <View className="w-full h-fit bg-transparent flex-row items-center justify-between pt-10 pl-2">
         <Text
           numberOfLines={2}
