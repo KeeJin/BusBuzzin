@@ -1,6 +1,6 @@
 import React from "react";
 import { Pressable, Text, ImageSourcePropType, Image } from "react-native";
-import { Ionicons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 
 interface TiledButtonProps {
   icon: ImageSourcePropType | string; // Accepts either ImageSourcePropType or string (Ionicons name)
@@ -11,7 +11,7 @@ interface TiledButtonProps {
 const TiledButton: React.FC<TiledButtonProps> = ({ icon, text, onPress }) => {
     const renderIcon = () => {
         if (typeof icon === 'string') {
-          return <Ionicons name={icon as any} size={40} color="black" />;
+          return <MaterialIcons name={icon as any} size={44} color="black"/>;
         } else {
           return <Image source={icon} className='w-6 h-6 mr-2' />;
         }
