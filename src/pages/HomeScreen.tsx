@@ -16,7 +16,6 @@ import TiledButton from "../components/ui/TiledButton";
 
 type HomeScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, "Home">;
-  route: RouteProp<RootStackParamList, "Home">;
 };
 
 const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
@@ -25,9 +24,9 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View className="bg-slate-800 w-full h-full items-center">
-        <Text className="text-3xl text-white text-center my-5">Bus Buzz!!</Text>
-
+      <View className="bg-slate-800 w-full h-full items-center justify-center">
+        <Text className="text-3xl text-white text-center font-bold">BusBuzzin</Text>
+        <Text className="text-lg text-white text-center font-light mb-3">Your friendly bus arrival app.</Text>
         <View className="w-3/4 h-fit mt-5 pt-3 pb-5 bg-slate-600 shadow-2xl shadow-white border-2 border-slate-500 items-center rounded-2xl">
           <Text className="text-lg text-white text-center">Quick Search</Text>
           <TextInput
@@ -54,12 +53,24 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
           />
         </View>
         <View className="flex flex-row flex-wrap justify-center mt-10">
-            <TiledButton icon="bus" text="Saved Bus Stops" onPress={() => {}} />
-            <TiledButton icon="map" text="Search Near Me" onPress={() => {}} />
-            <TiledButton icon="time" text="Bus Alerts" onPress={() => {}} />
-            <TiledButton icon="body" text="Kontol Anjing" onPress={() => {}} />
+          <TiledButton
+            icon="bookmarks"
+            text="Saved Bus Stops"
+            onPress={() => {
+              navigation.navigate("SavedBusStops");
+            }}
+          />
+          <TiledButton icon="map" text="Search Near Me" onPress={() => {}} />
+          <TiledButton
+            icon="notifications-active"
+            text="Bus Alerts"
+            onPress={() => {}}
+          />
+          <TiledButton icon="app-settings-alt" text="Settings" onPress={() => {
+            navigation.navigate("Settings");
+          }} />
         </View>
-        <StatusBar style="inverted" translucent={false} hidden={false} />
+        <StatusBar style="auto" translucent={false} hidden={false} />
       </View>
     </TouchableWithoutFeedback>
   );
