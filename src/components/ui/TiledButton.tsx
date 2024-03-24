@@ -18,7 +18,7 @@ const TiledButton: React.FC<TiledButtonProps> = ({ icon, text, onPress }) => {
     };
     return (
     <Pressable
-      className="flex flex-column items-center justify-center w-36 h-36 m-2 p-2 bg-slate-400 rounded-2xl active:bg-slate-500"
+      className="flex flex-column items-center justify-center w-36 h-36 m-2 p-2 bg-slate-400 rounded-2xl active:opacity-75 active:border active:shadow-2xl active:shadow-white active:border-slate-300"
       onPress={onPress}
     >
       {renderIcon()}

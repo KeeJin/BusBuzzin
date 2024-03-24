@@ -57,7 +57,7 @@ const SavedBusStopsScreen: React.FC<SavedBusStopsScreenProps> = ({
       <View className="mb-4">
         {item && (
           <Pressable
-            className="bg-slate-400 active:opacity-70 rounded-xl m-1 p-2"
+            className="bg-slate-400 active:opacity-75 rounded-xl m-1 p-2"
             onPress={() => {
               navigation.replace("BusStopDashboard", { id: item.busStopCode });
             }}
