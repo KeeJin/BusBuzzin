@@ -5,4 +5,10 @@ type RootStackParamList = {
   Settings: undefined;
 };
 
-export { RootStackParamList };
+interface BusAlert {
+  busstopId: string;
+  busNumber: string;
+  notificationTime: number;
+}
+
+export { RootStackParamList, BusAlert };

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, FlatList, RefreshControl } from "react-native";
+import { View, Text } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useQueryClient } from "react-query";
 import { RouteProp } from "@react-navigation/native";
@@ -8,108 +8,38 @@ import useBusArrivalQuery from "../hooks/UseBusArrivalQuery";
 import useBusStopMap from "../hooks/UseBusStopMap";
 import { RootStackParamList } from "../types";
 import BookmarkButton from "../components/ui/BookmarkButton";
-import AlertButton from "../components/ui/AlertButton";
-import AlertModal from "../components/AlertModal";
+import BusServiceCarousel from "../components/BusServiceCarousel";
 
 type BusStopDashboardScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, "BusStopDashboard">;
   route: RouteProp<RootStackParamList, "BusStopDashboard">;
 };
 
-interface BusAlert {
-  busstopId: string;
-  busNumber: string;
-  notificationTime: number;
-}
-
 const BusStopDashboardScreen: React.FC<BusStopDashboardScreenProps> = ({
   navigation,
   route,
 }) => {
+  const busstopId = route.params.id as string;
+
+  /* ---------------------------------------------------------------- */
+
   const [shouldGrab, setShouldGrab] = useState<boolean>(true);
   const [isSaved, setIsSaved] = useState<boolean | undefined>(undefined);
-  const [busServiceData, setBusServiceData] = useState<Map<string, string[]>[]>(
-    []
-  );
-  const [busAlerts, setBusAlerts] = useState<BusAlert[]>([]);
-  const [modalVisible, setModalVisible] = useState<boolean>(false);
-  const [selectedBusService, setSelectedBusService] = useState<string>("");
-  const [enabledAlerts, setEnabledAlerts] = useState<string[]>([]);
   const [busStopName, setBusStopName] = useState<string | undefined>("");
   const queryClient = useQueryClient();
   const busStopMap = useBusStopMap();
-  const busstopId = route.params.id as string;
-
-  const saveBusAlertSettings = async (
-    busNumber: string,
-    notificationTime: number
-  ) => {
-    try {
-      const existingSettings = await AsyncStorage.getItem("busAlerts");
-      let alerts: BusAlert[] = existingSettings
-        ? JSON.parse(existingSettings)
-        : [];
-      if (!alerts.includes({ busstopId, busNumber, notificationTime })) {
-        alerts.push({ busstopId, busNumber, notificationTime });
-      }
-      await AsyncStorage.setItem("busAlerts", JSON.stringify(alerts));
-    } catch (error) {
-      console.error("Error saving bus alert settings:", error);
+  const { data, isLoading, error, isError } = useBusArrivalQuery(
+    shouldGrab,
+    busstopId,
+    () => {
+      setShouldGrab(false);
+      queryClient.invalidateQueries(["busArrivalData"]);
     }
+  );
 
-    const fetchBusAlerts = async () => {
-      const alerts = await getBusAlertSettingsForBusStop();
-      setBusAlerts(alerts);
-    };
-    fetchBusAlerts();
-  };
+  /* ---------------------------------------------------------------- */
 
-  const removeBusAlertSettings = async (busNumber: string) => {
-    try {
-      const existingSettings = await AsyncStorage.getItem("busAlerts");
-      let alerts: BusAlert[] = existingSettings
-        ? JSON.parse(existingSettings)
-        : [];
-      alerts = alerts.filter(
-        (alert: BusAlert) =>
-          alert.busstopId !== busstopId && alert.busNumber !== busNumber
-      );
-      await AsyncStorage.setItem("busAlerts", JSON.stringify(alerts));
-    } catch (error) {
-      console.error("Error removing bus alert settings:", error);
-    }
-
-    const fetchBusAlerts = async () => {
-      const alerts = await getBusAlertSettingsForBusStop();
-      setBusAlerts(alerts);
-    };
-    fetchBusAlerts();
-  }
-
-  const getBusAlertSettingsForBusStop = async () => {
-    try {
-      const alerts = await AsyncStorage.getItem("busAlerts");
-      if (!alerts) return [];
-
-      const busStopAlerts = JSON.parse(alerts).filter(
-        (alert: BusAlert) => alert.busstopId === busstopId
-      );
-      setEnabledAlerts(busStopAlerts.map((alert: BusAlert) => alert.busNumber));
-      return busStopAlerts;
-    } catch (error) {
-      console.error("Error fetching bus alert settings:", error);
-      return [];
-    }
-  };
-
-  useEffect(() => {
-    const fetchBusAlerts = async () => {
-      const alerts = await getBusAlertSettingsForBusStop();
-      setBusAlerts(alerts);
-    };
-    fetchBusAlerts();
-  }, []);
-
+  // Effect to fetch bus stop names corresponding to bus stop codes
   useEffect(() => {
     const fetchBusStopName = async () => {
       // console.log("Fetching bus stop name for bus stop code: " + busstopId);
@@ -120,91 +50,6 @@ const BusStopDashboardScreen: React.FC<BusStopDashboardScreenProps> = ({
     };
     fetchBusStopName();
   }, [busStopMap]);
-
-  const { data, isLoading, error, isError } = useBusArrivalQuery(
-    shouldGrab,
-    busstopId,
-    () => {
-      setShouldGrab(false);
-      queryClient.invalidateQueries(["busArrivalData"]);
-    }
-  );
-
-  useEffect(() => {
-    // console.log("Bus stop ID: " + busstopId);
-    // console.log("busServiceData: ", data.busServiceData);
-    // console.log("data.busStopName: ", data.busStopName);
-    if (data && !isLoading && !isError) {
-      setBusServiceData(data);
-    }
-  }, [isLoading, data, isLoading, isError]);
-
-  const renderTimeArrival = (value: string) => {
-    if (Number(value) <= 0) {
-      return "Arriving";
-    } else if (String(value) === "NaN") {
-      return "NA";
-    } else {
-      return value + " min";
-    }
-  };
-
-  const renderBusTiming = ({ item }: { item: Map<string, string[]> }) => {
-    const handleEnableAlert = (busService: string) => {
-      setSelectedBusService(busService); // Store selected bus service for modal
-      setModalVisible(true); // Show modal
-    };
-
-    const checkIsAlertEnabled = async (busNumber: string): Promise<boolean> => {
-      try {
-        return busAlerts.some((alert) => alert.busNumber === busNumber);
-      } catch (error) {
-        console.error("Error checking if alert is enabled:", error);
-        return false;
-      }
-    };
-
-    const isAlertEnabled = (busNumber: string): boolean => {
-      return enabledAlerts.includes(busNumber);
-    };
-
-    return (
-      <View className="mb-4">
-        {item != undefined &&
-          Array.from(item.entries()).map(([key, values], index) => (
-            <View
-              className="py-2 px-2 rounded-xl bg-slate-400 flex-row justify-between"
-              key={index}
-            >
-              <View>
-                <Text className="px-2 text-2xl pt-2 pb-3 font-semibold">
-                  Bus {key}
-                </Text>
-                <Text className="px-2">
-                  {values.map((value, index) => (
-                    <Text key={index}>
-                      {renderTimeArrival(value)}
-                      {index === values.length - 1 ? "" : ", "}
-                    </Text>
-                  ))}
-                </Text>
-              </View>
-              <AlertButton
-                isAlertEnabled={isAlertEnabled(key)}
-                onPress={() => {
-                  if (!isAlertEnabled(key)) {
-                    handleEnableAlert(key);
-                  } else {
-                    // Disable alert
-                    removeBusAlertSettings(key);
-                  }
-                }}
-              />
-            </View>
-          ))}
-      </View>
-    );
-  };
 
   const onBookmarkPress = () => {
     setIsSaved(!isSaved);
@@ -288,37 +133,20 @@ const BusStopDashboardScreen: React.FC<BusStopDashboardScreenProps> = ({
             Error occured. ({String(error)})
           </Text>
         )}
-        {busServiceData ? (
-          // <Text className="text-white text-md mt-5">
-          //     data?.busServiceData: {busServiceData}
-          // </Text>
-          <FlatList
-            className="w-full h-full bg-slate-600 mt-5 mb-6 p-3 rounded-xl"
-            data={busServiceData}
-            renderItem={renderBusTiming}
-            keyExtractor={(_, index: number) => index.toString()}
-            refreshControl={
-              <RefreshControl
-                refreshing={isLoading}
-                onRefresh={() => {
-                  setShouldGrab(true);
-                  queryClient.invalidateQueries(["busArrivalData"]);
-                }}
-              />
-            }
-          />
-        ) : (
-          <></>
-        )}
+        {(data && !isLoading && !isError) ? 
+        (<BusServiceCarousel
+          busstopId={busstopId}
+          busServiceMapping={data}
+          isRefreshing={isLoading}
+          onRefresh={() => {
+            setShouldGrab(true);
+            queryClient.invalidateQueries(["busArrivalData"]);
+          }}
+        />) : 
+        (<Text className="text-white text-md mt-5">
+          Loading bus services...
+        </Text>)}
       </View>
-      <AlertModal
-        visible={modalVisible}
-        onClose={() => setModalVisible(false)}
-        onConfirm={(time) => {
-          saveBusAlertSettings(selectedBusService, time);
-        }}
-        upperLimit={10}
-      />
     </View>
   );
 };
