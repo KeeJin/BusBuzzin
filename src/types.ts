@@ -3,6 +3,7 @@ type RootStackParamList = {
   Home: undefined;
   SavedBusStops: undefined;
   Settings: undefined;
+  SavedBusAlertsScreen: undefined;
 };
 
 interface BusAlert {
@@ -11,4 +12,9 @@ interface BusAlert {
   notificationTime: number;
 }
 
-export { RootStackParamList, BusAlert };
+type BusStopGeneralInfo = {
+  busStopCode: string;
+  description: string;
+};
+
+export { RootStackParamList, BusAlert, BusStopGeneralInfo };

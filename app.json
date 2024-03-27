@@ -34,7 +34,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./src/assets/logo.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#9ef4ff"
       },
       "package": "com.keeejinnn.BusBuzzin",
       "softwareKeyboardLayoutMode": "pan"

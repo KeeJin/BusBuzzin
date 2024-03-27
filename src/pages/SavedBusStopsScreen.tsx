@@ -4,14 +4,10 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../types";
 import useSavedBusStops from "../hooks/UseSavedBusStops";
 import useBusStopMap from "../hooks/UseBusStopMap";
+import { BusStopGeneralInfo } from "../types";
 
 type SavedBusStopsScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, "SavedBusStops">;
-};
-
-type BusStopGeneralInfo = {
-  busStopCode: string;
-  description: string;
 };
 
 const SavedBusStopsScreen: React.FC<SavedBusStopsScreenProps> = ({
