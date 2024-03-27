@@ -46,8 +46,22 @@ TaskManager.defineTask(BACKGROUND_ALERTS_TASK, async () => {
       const eta = calculateMinutesToArrival(busArrivals["EstimatedArrival"]);
       if (eta <= notificationTime) {
         console.log("Bus is arriving soon!");
-        // Send notification (TODO)
-        Vibration.vibrate(500);
+        Notifications.setNotificationHandler({
+          handleNotification: async () => ({
+            shouldShowAlert: true,
+            shouldPlaySound: true,
+            shouldSetBadge: false,
+          }),
+        });
+        Notifications.scheduleNotificationAsync({
+          content: {
+            title: "Bus is arriving soon!",
+            body: `Bus ${busNumber} is arriving in ${eta} minutes`,
+            priority: Notifications.AndroidNotificationPriority.HIGH,
+            vibrate: [0, 250, 250, 250],
+          },
+          trigger: null,
+        });
 
         // Remove the alert
         await removeBusAlertSettings(busStopCode as string, busNumber);

@@ -4,8 +4,11 @@
     "slug": "BusBuzzin",
     "version": "1.0.1",
     "orientation": "portrait",
-    "icon": "./src/assets/logo.jpg",
+    "icon": "./src/assets/logo.png",
     "userInterfaceStyle": "light",
+    "notification": {
+      "icon": "./src/assets/bus_alert_notification_icon.png"
+    },
     "splash": {
       "image": "./src/assets/splash.png",
       "resizeMode": "contain",
@@ -30,7 +33,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./src/assets/logo.jpg",
+        "foregroundImage": "./src/assets/logo.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.keeejinnn.BusBuzzin",
