@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, FlatList, RefreshControl } from "react-native";
+import { View, Text } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useQueryClient } from "react-query";
 import { RouteProp } from "@react-navigation/native";
@@ -8,6 +8,7 @@ import useBusArrivalQuery from "../hooks/UseBusArrivalQuery";
 import useBusStopMap from "../hooks/UseBusStopMap";
 import { RootStackParamList } from "../types";
 import BookmarkButton from "../components/ui/BookmarkButton";
+import BusServiceCarousel from "../components/BusServiceCarousel";
 
 type BusStopDashboardScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, "BusStopDashboard">;
@@ -18,16 +19,27 @@ const BusStopDashboardScreen: React.FC<BusStopDashboardScreenProps> = ({
   navigation,
   route,
 }) => {
+  const busstopId = route.params.id as string;
+
+  /* ---------------------------------------------------------------- */
+
   const [shouldGrab, setShouldGrab] = useState<boolean>(true);
   const [isSaved, setIsSaved] = useState<boolean | undefined>(undefined);
-  const [busServiceData, setBusServiceData] = useState<Map<string, string[]>[]>(
-    []
-  );
   const [busStopName, setBusStopName] = useState<string | undefined>("");
   const queryClient = useQueryClient();
   const busStopMap = useBusStopMap();
-  const busstopId = route.params.id as string;
+  const { data, isLoading, error, isError } = useBusArrivalQuery(
+    shouldGrab,
+    busstopId,
+    () => {
+      setShouldGrab(false);
+      queryClient.invalidateQueries(["busArrivalData"]);
+    }
+  );
 
+  /* ---------------------------------------------------------------- */
+
+  // Effect to fetch bus stop names corresponding to bus stop codes
   useEffect(() => {
     const fetchBusStopName = async () => {
       // console.log("Fetching bus stop name for bus stop code: " + busstopId);
@@ -38,56 +50,6 @@ const BusStopDashboardScreen: React.FC<BusStopDashboardScreenProps> = ({
     };
     fetchBusStopName();
   }, [busStopMap]);
-
-  const { data, isLoading, error, isError } = useBusArrivalQuery(
-    shouldGrab,
-    busstopId,
-    () => {
-      setShouldGrab(false);
-      queryClient.invalidateQueries(["busArrivalData"]);
-    }
-  );
-
-  useEffect(() => {
-    // console.log("Bus stop ID: " + busstopId);
-    // console.log("busServiceData: ", data.busServiceData);
-    // console.log("data.busStopName: ", data.busStopName);
-    if (data && !isLoading && !isError) {
-      setBusServiceData(data);
-    }
-  }, [isLoading, data, isLoading, isError]);
-
-  const renderTimeArrival = (value: string) => {
-    if (Number(value) <= 0) {
-      return "Arriving";
-    } else if (String(value) === "NaN") {
-      return "NA";
-    } else {
-      return value + " min";
-    }
-  };
-
-  const renderBusTiming = ({ item }: { item: Map<string, string[]> }) => {
-    // console.log("busServiceData: ", busServiceData);
-    return (
-      <View className="mb-4">
-        {item != undefined &&
-          Array.from(item.entries()).map(([key, values], index) => (
-            <View className="py-2 px-1 rounded-xl bg-slate-400" key={index}>
-              <Text className="px-2 text-xl p-1">Bus {key}</Text>
-              <Text className="px-2">
-                {values.map((value, index) => (
-                  <Text key={index}>
-                    {renderTimeArrival(value)}
-                    {index === values.length - 1 ? "" : ", "}
-                  </Text>
-                ))}
-              </Text>
-            </View>
-          ))}
-      </View>
-    );
-  };
 
   const onBookmarkPress = () => {
     setIsSaved(!isSaved);
@@ -171,28 +133,19 @@ const BusStopDashboardScreen: React.FC<BusStopDashboardScreenProps> = ({
             Error occured. ({String(error)})
           </Text>
         )}
-        {busServiceData ? (
-          // <Text className="text-white text-md mt-5">
-          //     data?.busServiceData: {busServiceData}
-          // </Text>
-          <FlatList
-            className="w-full h-full bg-slate-600 mt-5 mb-6 p-3 rounded-xl"
-            data={busServiceData}
-            renderItem={renderBusTiming}
-            keyExtractor={(_, index: number) => index.toString()}
-            refreshControl={
-              <RefreshControl
-                refreshing={isLoading}
-                onRefresh={() => {
-                  setShouldGrab(true);
-                  queryClient.invalidateQueries(["busArrivalData"]);
-                }}
-              />
-            }
-          />
-        ) : (
-          <></>
-        )}
+        {(data && !isLoading && !isError) ? 
+        (<BusServiceCarousel
+          busstopId={busstopId}
+          busServiceMapping={data}
+          isRefreshing={isLoading}
+          onRefresh={() => {
+            setShouldGrab(true);
+            queryClient.invalidateQueries(["busArrivalData"]);
+          }}
+        />) : 
+        (<Text className="text-white text-md mt-5">
+          Loading bus services...
+        </Text>)}
       </View>
     </View>
   );

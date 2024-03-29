@@ -62,7 +62,9 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
           <TiledButton
             icon="notifications-active"
             text="Bus Alerts"
-            onPress={() => {}}
+            onPress={() => {
+              navigation.navigate("SavedBusAlertsScreen");
+            }}
           />
           <TiledButton icon="app-settings-alt" text="Settings" onPress={() => {
             navigation.navigate("Settings");
