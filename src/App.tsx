@@ -21,6 +21,14 @@ import SavedBusAlertsScreen from "./pages/BusAlertsScreen";
 const Stack = createNativeStackNavigator();
 const queryClient = new QueryClient();
 const BACKGROUND_ALERTS_TASK = "background-alerts";
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+  }),
+});
+
 TaskManager.defineTask(BACKGROUND_ALERTS_TASK, async () => {
   console.log("Running background task");
   const busAlertSettings = await getBusAlertSettings("");
@@ -37,12 +45,18 @@ TaskManager.defineTask(BACKGROUND_ALERTS_TASK, async () => {
     }
 
     const data = await response.json();
+    // console.log("Data fetched for bus stop %s", busStopCode);
+    // for (const service of data["Services"]) {
+    //   console.log("Bus: %s", service["ServiceNo"]);
+    //   console.log("Service: %s", service["NextBus"]["EstimatedArrival"]);
+    // }
     if (data["Services"] !== undefined) {
       const busArrivals = data["Services"].find(
         (service: any) => service["ServiceNo"] === busNumber
       )?.NextBus;
 
       if (!busArrivals) return;
+      console.log("Calculating ETA for bus: %s at bus stop %s", busNumber, busStopCode);
       const eta = calculateMinutesToArrival(busArrivals["EstimatedArrival"]);
       if (eta <= notificationTime) {
         console.log("Bus is arriving soon!");
@@ -50,7 +64,7 @@ TaskManager.defineTask(BACKGROUND_ALERTS_TASK, async () => {
           content: {
             title: "Bus is arriving soon!",
             body: `Bus ${busNumber} is arriving in ${eta} minutes`,
-            priority: Notifications.AndroidNotificationPriority.HIGH,
+            priority: Notifications.AndroidNotificationPriority.MAX,
             vibrate: [0, 500, 500, 500, 500, 500, 500, 3000,],
             sound: "default",
           },
@@ -58,11 +72,13 @@ TaskManager.defineTask(BACKGROUND_ALERTS_TASK, async () => {
         });
 
         // Remove the alert
+        console.log("Alert fired! Removing alert for bus: %s at bus stop %s", busNumber, busStopCode);
         await removeBusAlertSettings(busStopCode as string, busNumber);
       }
     }
   });
   await Promise.all(promises);
+  console.log("All alerts checked!");
 
   // Be sure to return the successful result type!
   return BackgroundFetch.BackgroundFetchResult.NewData;
@@ -70,7 +86,7 @@ TaskManager.defineTask(BACKGROUND_ALERTS_TASK, async () => {
 
 const registerBackgroundFetchAsync = async () => {
   return BackgroundFetch.registerTaskAsync(BACKGROUND_ALERTS_TASK, {
-    minimumInterval: 10, // 10s
+    minimumInterval: 30, // 10s
     stopOnTerminate: false, // android only,
     startOnBoot: true, // android only
   });
@@ -107,7 +123,7 @@ const createNotificationChannelIfNotExists = async () => {
   if (exists) return;
   await Notifications.setNotificationChannelAsync("bus-alerts", {
     name: "Bus Alerts",
-    importance: Notifications.AndroidImportance.HIGH,
+    importance: Notifications.AndroidImportance.MAX,
     sound: "default",
     lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
     vibrationPattern: [0, 500, 500, 500, 500, 500, 500, 3000,],
@@ -119,13 +135,6 @@ export default function App() {
     const init = async () => {
       await requestNotificationsIfNotGranted();
       await createNotificationChannelIfNotExists();
-      Notifications.setNotificationHandler({
-        handleNotification: async () => ({
-          shouldShowAlert: true,
-          shouldPlaySound: true,
-          shouldSetBadge: false,
-        }),
-      });
       await registerBackgroundFetchAsync();
     };
     init();
