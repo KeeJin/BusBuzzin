@@ -1,11 +1,6 @@
 import React from "react";
 
-import {
-  View,
-  Text,
-  Modal,
-  TouchableWithoutFeedback,
-} from "react-native";
+import { View, Text, Modal, TouchableWithoutFeedback } from "react-native";
 import ModalButton from "./ui/ModalButton";
 
 interface ConfirmationModalProps {
@@ -35,16 +30,18 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
           style={{ backgroundColor: "rgba(156, 163, 175, 0.5)" }}
           className="flex-1 justify-center items-center"
         >
-          <View className="bg-white px-5 py-4 rounded-md">
-            <Text className="text-lg font-bold mb-2">{title}</Text>
-            <Text numberOfLines={2} className="mb-4">
-              {message}
-            </Text>
-            <View className="flex-row justify-between px-1">
-              <ModalButton title="No" onPress={onCancel} positive={false} />
-              <ModalButton title="Yes" onPress={onConfirm} positive={true} />
+          <TouchableWithoutFeedback onPress={() => {}}>
+            <View className="bg-white px-5 py-4 rounded-md">
+              <Text className="text-lg font-bold mb-2">{title}</Text>
+              <Text numberOfLines={2} className="mb-4">
+                {message}
+              </Text>
+              <View className="flex-row justify-between px-1">
+                <ModalButton title="No" onPress={onCancel} positive={false} />
+                <ModalButton title="Yes" onPress={onConfirm} positive={true} />
+              </View>
             </View>
-          </View>
+          </TouchableWithoutFeedback>
         </View>
       </TouchableWithoutFeedback>
     </Modal>

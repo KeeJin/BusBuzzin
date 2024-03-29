@@ -1,10 +1,5 @@
 import React, { useState } from "react";
-import {
-  View,
-  Modal,
-  Text,
-  TouchableWithoutFeedback,
-} from "react-native";
+import { View, Modal, Text, TouchableWithoutFeedback } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import ModalButton from "./ui/ModalButton";
 
@@ -51,31 +46,37 @@ const AlertModal: React.FC<AlertModalProps> = ({
           style={{ backgroundColor: "rgba(156, 163, 175, 0.5)" }}
           className="h-full w-full flex-1 justify-center items-center px-5"
         >
-          <View className="bg-slate-100 px-6 py-4 rounded-md justify-center">
-            <Text className="text-center text-xl font-semibold">
-              Set Notification Time
-            </Text>
-            <View className="border border-black rounded-full my-2">
-              <Picker
-                selectedValue={String(notificationTime)}
-                onValueChange={(itemValue: string) =>
-                  setNotificationTime(Number(itemValue))
-                }
-                mode="dialog"
-                prompt="Select Time"
-              >
-                {pickerItems}
-              </Picker>
+          <TouchableWithoutFeedback onPress={() => {}}>
+            <View className="bg-slate-100 px-6 py-4 rounded-md justify-center">
+              <Text className="text-center text-xl font-semibold">
+                Set Notification Time
+              </Text>
+              <View className="border border-black rounded-full my-3">
+                <Picker className="w-full"
+                  selectedValue={String(notificationTime)}
+                  onValueChange={(itemValue: string) =>
+                    setNotificationTime(Number(itemValue))
+                  }
+                  mode="dialog"
+                  prompt="Select Time"
+                >
+                  {pickerItems}
+                </Picker>
+              </View>
+              <View className="flex-row justify-between">
+                <ModalButton
+                  title="Cancel"
+                  onPress={onClose}
+                  positive={false}
+                />
+                <ModalButton
+                  title="Confirm"
+                  onPress={handleConfirm}
+                  positive={true}
+                />
+              </View>
             </View>
-            <View className="flex-row justify-between">
-              <ModalButton title="Cancel" onPress={onClose} positive={false} />
-              <ModalButton
-                title="Confirm"
-                onPress={handleConfirm}
-                positive={true}
-              />
-            </View>
-          </View>
+          </TouchableWithoutFeedback>
         </View>
       </TouchableWithoutFeedback>
     </Modal>
