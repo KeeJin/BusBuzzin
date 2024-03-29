@@ -11,7 +11,7 @@ A SG-based bus arrival mobile app with a focus on delivering push notifications 
 - Nativewind for styling
 - React Query for API fetching from [LTA](https://datamall.lta.gov.sg/content/datamall/en/dynamic-data.html)
 
-## Feature Showcase
+## Feature Showcase <img alt="logo" src="src/assets/logo.png" width="25">  
 
 ### Demo
 
@@ -35,4 +35,4 @@ A SG-based bus arrival mobile app with a focus on delivering push notifications 
 
 ## APK Release
 
-- v1.1.0: [APK download]()
+- v1.1.0: [APK download](https://www.dropbox.com/scl/fi/o5xuwqjcvkejuqv3aw6iz/BusBuzz_v1.1.0.apk?rlkey=xl6f1m1ondh1e5raz6swhbql5&dl=0)
