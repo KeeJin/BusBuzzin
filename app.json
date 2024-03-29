@@ -2,10 +2,13 @@
   "expo": {
     "name": "BusBuzzin",
     "slug": "BusBuzzin",
-    "version": "1.0.1",
+    "version": "1.1.0",
     "orientation": "portrait",
-    "icon": "./src/assets/logo.jpg",
+    "icon": "./src/assets/logo.png",
     "userInterfaceStyle": "light",
+    "notification": {
+      "icon": "./src/assets/bus_alert_notification_icon.png"
+    },
     "splash": {
       "image": "./src/assets/splash.png",
       "resizeMode": "contain",
@@ -30,8 +33,8 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./src/assets/logo.jpg",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./src/assets/logo.png",
+        "backgroundColor": "#9ef4ff"
       },
       "package": "com.keeejinnn.BusBuzzin",
       "softwareKeyboardLayoutMode": "pan"
@@ -51,7 +54,7 @@
     ],
     "extra": {
       "eas": {
-        "projectId": "163d5063-8c68-48f3-bb70-e54d096cb00d"
+        "projectId": "59cae476-7ecf-4088-af42-dfd79343a9d8"
       }
     }
   }
