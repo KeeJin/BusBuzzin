@@ -1,6 +1,6 @@
 {
   "name": "busbuzzin",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "main": "./src/App.tsx",
   "scripts": {
     "start": "expo start",

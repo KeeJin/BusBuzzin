@@ -10,4 +10,4 @@ A SG-based bus arrival mobile app with a focus on delivering push notifications 
 - React Query for API fetching from [LTA](https://datamall.lta.gov.sg/content/datamall/en/dynamic-data.html)
 
 ## APK Release
-- v1.0.1-alpha: [APK download](https://expo.dev/accounts/keeejinnn/projects/BusBuzzin/builds/4d327ea6-a02f-4ff9-a1da-d9eec0075254)
+- v1.1.0: [APK download]()
