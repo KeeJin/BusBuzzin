@@ -28,18 +28,9 @@ const BusServiceCarousel: React.FC<BusServiceCarouselProps> = ({
   onRefresh,
 }) => {
   const [selectedBusService, setSelectedBusService] =
-    useState<SelectedBusService>("");
+    useState<SelectedBusService>({busService: "", nextBusArrival: ""});
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [enabledAlerts, setEnabledAlerts] = useState<string[]>([]);
-  // add fake data for testing
-  // busServiceMapping = [
-  //   new Map([
-  //     ["123", ["1", "2", "3"]],
-  //   ]),
-  //   new Map([
-  //     ["436A", ["10", "11", "12"]],
-  //   ]),
-  // ];
 
   // Effect to fetch bus alert settings on component mount
   useEffect(() => {
@@ -149,10 +140,6 @@ const BusServiceCarousel: React.FC<BusServiceCarouselProps> = ({
               (alert: BusAlert) => alert.busNumber
             )
           );
-          setSelectedBusService({ busService: "", nextBusArrival: "" });
-        }}
-        onRequestClose={() => {
-          setModalVisible(false);
           setSelectedBusService({ busService: "", nextBusArrival: "" });
         }}
         upperLimit={
