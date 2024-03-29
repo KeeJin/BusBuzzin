@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, FlatList, Pressable, Vibration } from "react-native";
-import useBusStopMap from "../hooks/UseBusStopMap";
+import useBusStopDb from "../hooks/UseBusStopDb";
 import { getBusAlertSettings } from "../utils/BusAlerts";
 import { BusAlert } from "../types";
 
 const SavedBusAlertsScreen: React.FC = () => {
-  const busStopMap = useBusStopMap();
+  const { busStopMap } = useBusStopDb();
   const [activeBusAlerts, setActiveBusAlerts] = useState<BusAlert[]>([]);
 
   useEffect(() => {
@@ -30,22 +30,23 @@ const SavedBusAlertsScreen: React.FC = () => {
             <View className="flex-row justify-between px-3 py-1 items-center">
               <View className="flex-column justify-between">
                 <Text className="text-black text-xs font-semibold">
-                    Bus Service 
+                  Bus Service
                 </Text>
                 <Text className="text-black text-3xl font-semibold">
                   {item.busNumber}
                 </Text>
               </View>
               <View className="flex-column justify-between">
-              <Text className="text-black text-base font-light text-right">
-                  {busStopMap?.has(item.busstopId) ?
-                    busStopMap.get(item.busstopId)?.Description : item.busstopId}
+                <Text className="text-black text-base font-light text-right">
+                  {busStopMap?.has(item.busstopId)
+                    ? busStopMap.get(item.busstopId)?.Description
+                    : item.busstopId}
                 </Text>
               </View>
             </View>
             <Text className="text-black text-sm font-light text-center">
-                  Buzzin' you {item.notificationTime} min in advance!
-                </Text>
+              Buzzin' you {item.notificationTime} min in advance!
+            </Text>
           </Pressable>
         )}
       </View>

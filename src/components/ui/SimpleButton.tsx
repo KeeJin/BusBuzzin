@@ -10,7 +10,7 @@ const SimpleButton: React.FC<ButtonProps> = ({ onPress, title }) => (
   <TouchableOpacity
     onPress={onPress}
     activeOpacity={0.7}
-    className="bg-blue-400 py-2 w-32 rounded-2xl"
+    className="bg-blue-400 px-7 w-fit h-8 rounded-2xl justify-center items-center"
   >
     <Text className="text-md text-white text-center">{title}</Text>
   </TouchableOpacity>

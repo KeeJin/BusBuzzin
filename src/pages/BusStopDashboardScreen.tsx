@@ -5,7 +5,7 @@ import { useQueryClient } from "react-query";
 import { RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import useBusArrivalQuery from "../hooks/UseBusArrivalQuery";
-import useBusStopMap from "../hooks/UseBusStopMap";
+import useBusStopDb from "../hooks/UseBusStopDb";
 import { RootStackParamList } from "../types";
 import BookmarkButton from "../components/ui/BookmarkButton";
 import BusServiceCarousel from "../components/BusServiceCarousel";
@@ -27,7 +27,7 @@ const BusStopDashboardScreen: React.FC<BusStopDashboardScreenProps> = ({
   const [isSaved, setIsSaved] = useState<boolean | undefined>(undefined);
   const [busStopName, setBusStopName] = useState<string | undefined>("");
   const queryClient = useQueryClient();
-  const busStopMap = useBusStopMap();
+  const { busStopMap } = useBusStopDb();
   const { data, isLoading, error, isError } = useBusArrivalQuery(
     shouldGrab,
     busstopId,
@@ -133,19 +133,21 @@ const BusStopDashboardScreen: React.FC<BusStopDashboardScreenProps> = ({
             Error occured. ({String(error)})
           </Text>
         )}
-        {(data && !isLoading && !isError) ? 
-        (<BusServiceCarousel
-          busstopId={busstopId}
-          busServiceMapping={data}
-          isRefreshing={isLoading}
-          onRefresh={() => {
-            setShouldGrab(true);
-            queryClient.invalidateQueries(["busArrivalData"]);
-          }}
-        />) : 
-        (<Text className="text-white text-md mt-5">
-          Loading bus services...
-        </Text>)}
+        {data && !isLoading && !isError ? (
+          <BusServiceCarousel
+            busstopId={busstopId}
+            busServiceMapping={data}
+            isRefreshing={isLoading}
+            onRefresh={() => {
+              setShouldGrab(true);
+              queryClient.invalidateQueries(["busArrivalData"]);
+            }}
+          />
+        ) : (
+          <Text className="text-white text-md mt-5">
+            Loading bus services...
+          </Text>
+        )}
       </View>
     </View>
   );

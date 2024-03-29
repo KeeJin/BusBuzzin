@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import * as busStopsJson from '../assets/busstops.json';
 
-type BusStop = {
+interface BusStop {
   BusStopCode: string;
   RoadName: string;
   Description: string;
@@ -10,9 +10,16 @@ type BusStop = {
 };
 
 type BusStopMap = Map<string, BusStop>;
+type BusStopArray = string[];
 
-const useBusStopMap = (): BusStopMap | undefined => {
+interface BusStopData {
+  busStopMap: BusStopMap | undefined;
+  busStopArray: BusStopArray | undefined;
+};
+
+const useBusStopDb = (): BusStopData => {
   const [busStopMap, setBusStopMap] = useState<BusStopMap>();
+  const [busStopArray, setBusStopArray] = useState<BusStopArray>();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -22,12 +29,18 @@ const useBusStopMap = (): BusStopMap | undefined => {
 
         // Convert the array to a Map
         const map = new Map<string, BusStop>();
+        const array: BusStopArray = [];
         busStops.forEach((busStop) => {
+          // update map
           map.set(busStop.BusStopCode, busStop);
+          
+          // update array
+          const element = busStop.Description + " (" + busStop.BusStopCode + ")";
+          array.push(element);
         });
 
-        // Set the Map in the state
         setBusStopMap(map);
+        setBusStopArray(array);
       } catch (error) {
         console.error('Error fetching bus stop data:', error);
       }
@@ -37,7 +50,7 @@ const useBusStopMap = (): BusStopMap | undefined => {
     fetchData();
   }, []);
 
-  return busStopMap;
+  return {busStopMap, busStopArray};
 };
 
-export default useBusStopMap;
+export default useBusStopDb;

@@ -39,4 +39,4 @@ A SG-based bus arrival mobile app with a focus on delivering push notifications 
 
 
 ## Attribution
-<a href="https://www.flaticon.com/free-icons/bus-stop" title="bus stop icons">Bus stop icons created by mia elysia - Flaticon</a>
+Bus stop icon created by: <a href="https://www.flaticon.com/free-icons/bus-stop" title="bus stop icons"> mia elysia - Flaticon</a>
