@@ -67,4 +67,17 @@ const removeBusAlertSettings = async (busstopId: string, busNumber: string) => {
   }
 };
 
-export { getBusAlertSettings, saveBusAlertSettings, removeBusAlertSettings };
+const removeAllBusAlertSettings = async () => {
+  try {
+    await AsyncStorage.removeItem("busAlerts");
+  } catch (e) {
+    console.error(e);
+  }
+};
+
+export {
+  getBusAlertSettings,
+  saveBusAlertSettings,
+  removeBusAlertSettings,
+  removeAllBusAlertSettings,
+};

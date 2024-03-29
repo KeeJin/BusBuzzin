@@ -95,16 +95,6 @@ const SavedBusStopsScreen: React.FC<SavedBusStopsScreenProps> = ({
     );
   };
 
-  if (savedBusStops && savedBusStops.length === 0) {
-    return (
-      <View className="bg-slate-800 flex h-full px-6 py-10">
-        <Text className="text-white text-center text-3xl">
-          No saved bus stops.{" "}
-        </Text>
-      </View>
-    );
-  }
-
   return (
     <View className="bg-slate-800 h-full px-6 justify-center">
       <Text className="text-white text-3xl text-left pl-2">
