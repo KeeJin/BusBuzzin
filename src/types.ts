@@ -4,6 +4,7 @@ type RootStackParamList = {
   SavedBusStops: undefined;
   Settings: undefined;
   SavedBusAlerts: undefined;
+  Map: undefined;
 };
 
 interface BusAlert {

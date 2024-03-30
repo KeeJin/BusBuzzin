@@ -74,7 +74,7 @@ const BusStopSearchBar: React.FC<BusStopSearchBarProps> = ({
             onSubmitEditing={onConfirm}
             selectTextOnFocus={true}
           />
-          <Text style={{fontSize: 13, lineHeight: 19}} className="text-white text-center mx-2 font-light italic">
+          <Text style={{fontSize: 13, lineHeight: 24}} className="text-white text-left mx-2 font-light italic">
             Try "Bishan" or "53239".
           </Text>
           {showSuggestions && userInput.length >= 5 && (

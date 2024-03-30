@@ -12,7 +12,7 @@ type HomeScreenProps = {
 
 const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   const [busstopId, setBusstopId] = useState<string>("");
-  const { busStopMap, busStopArray } = useBusStopDb();
+  const { busStopMap } = useBusStopDb();
 
   const handleSearchConfirm = (id: string) => {
     setBusstopId(id);
@@ -70,7 +70,9 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
               navigation.navigate("SavedBusStops");
             }}
           />
-          <TiledButton icon="map" text="Search Near Me" onPress={() => {}} />
+          <TiledButton icon="map" text="Search Near Me" onPress={() => {
+            navigation.navigate("MapScreen");
+          }} />
           <TiledButton
             icon="notifications-active"
             text="Bus Alerts"

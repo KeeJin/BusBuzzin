@@ -7,6 +7,7 @@ import { StatusBar } from "expo-status-bar";
 import * as BackgroundFetch from "expo-background-fetch";
 import * as TaskManager from "expo-task-manager";
 import * as Notifications from "expo-notifications";
+import * as Location from "expo-location";
 
 import FetchInfoByBusStopCode from "./services/api/FetchInfoByBusStopCode";
 import { getBusAlertSettings, removeBusAlertSettings } from "./utils/BusAlerts";
@@ -15,6 +16,7 @@ import calculateMinutesToArrival from "./utils/CalculateEta";
 import HomeScreen from "./pages/HomeScreen";
 import BusStopDashboardScreen from "./pages/BusStopDashboardScreen";
 import SavedBusStopsScreen from "./pages/SavedBusStopsScreen";
+import MapScreen from "./pages/MapScreen";
 import SettingsScreen from "./pages/SettingsScreen";
 import SavedBusAlertsScreen from "./pages/BusAlertsScreen";
 
@@ -56,7 +58,11 @@ TaskManager.defineTask(BACKGROUND_ALERTS_TASK, async () => {
       )?.NextBus;
 
       if (!busArrivals) return;
-      console.log("Calculating ETA for bus: %s at bus stop %s", busNumber, busStopCode);
+      console.log(
+        "Calculating ETA for bus: %s at bus stop %s",
+        busNumber,
+        busStopCode
+      );
       const eta = calculateMinutesToArrival(busArrivals["EstimatedArrival"]);
       if (eta <= notificationTime) {
         console.log("Bus is arriving soon!");
@@ -65,14 +71,18 @@ TaskManager.defineTask(BACKGROUND_ALERTS_TASK, async () => {
             title: "Bus is arriving soon!",
             body: `Bus ${busNumber} is arriving in ${eta} minutes`,
             priority: Notifications.AndroidNotificationPriority.MAX,
-            vibrate: [0, 500, 500, 500, 500, 500, 500, 3000,],
+            vibrate: [0, 500, 500, 500, 500, 500, 500, 3000],
             sound: "default",
           },
           trigger: null,
         });
 
         // Remove the alert
-        console.log("Alert fired! Removing alert for bus: %s at bus stop %s", busNumber, busStopCode);
+        console.log(
+          "Alert fired! Removing alert for bus: %s at bus stop %s",
+          busNumber,
+          busStopCode
+        );
         await removeBusAlertSettings(busStopCode as string, busNumber);
       }
     }
@@ -102,15 +112,22 @@ const allowsNotificationsAsync = async (): Promise<boolean> => {
 
 const requestNotificationsIfNotGranted = async () => {
   const allowed = await allowsNotificationsAsync();
-  if (allowed) return;
-  await Notifications.requestPermissionsAsync({
-    ios: {
-      allowAlert: true,
-      allowBadge: true,
-      allowSound: true,
-      allowAnnouncements: true,
-    },
-  });
+  if (!allowed) {
+    await Notifications.requestPermissionsAsync({
+      ios: {
+        allowAlert: true,
+        allowBadge: true,
+        allowSound: true,
+        allowAnnouncements: true,
+      },
+    });
+  }
+
+  let { status } = await Location.requestForegroundPermissionsAsync();
+  if (status !== "granted") {
+    alert("Permission to access location was denied");
+    return;
+  }
 };
 
 const notificationChannelExists = async () => {
@@ -126,7 +143,7 @@ const createNotificationChannelIfNotExists = async () => {
     importance: Notifications.AndroidImportance.MAX,
     sound: "default",
     lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
-    vibrationPattern: [0, 500, 500, 500, 500, 500, 500, 3000,],
+    vibrationPattern: [0, 500, 500, 500, 500, 500, 500, 3000],
   });
 };
 
@@ -153,6 +170,11 @@ export default function App() {
           <Stack.Screen
             name="BusStopDashboard"
             component={BusStopDashboardScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="MapScreen"
+            component={MapScreen}
             options={{ headerShown: false }}
           />
           <Stack.Screen
