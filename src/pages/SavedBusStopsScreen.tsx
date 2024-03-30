@@ -3,7 +3,7 @@ import { View, Text, FlatList, Pressable, Vibration } from "react-native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../types";
 import useSavedBusStops from "../hooks/UseSavedBusStops";
-import useBusStopMap from "../hooks/UseBusStopMap";
+import useBusStopDb from "../hooks/UseBusStopDb";
 import { BusStopGeneralInfo } from "../types";
 
 type SavedBusStopsScreenProps = {
@@ -14,7 +14,7 @@ const SavedBusStopsScreen: React.FC<SavedBusStopsScreenProps> = ({
   navigation,
 }) => {
   const savedBusStops = useSavedBusStops();
-  const busStopMap = useBusStopMap();
+  const { busStopMap } = useBusStopDb();
   const [busStopNameMapping, setBusStopNameMapping] = useState<
     BusStopGeneralInfo[]
   >([]);
