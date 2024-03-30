@@ -1,7 +1,5 @@
 import React from "react";
 import { View, Text } from "react-native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ConfirmationModal from "../components/ConfirmationModal";
 import SettingsCard from "../components/ui/SettingsCard";
