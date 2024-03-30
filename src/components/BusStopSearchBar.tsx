@@ -38,7 +38,7 @@ const BusStopSearchBar: React.FC<BusStopSearchBarProps> = ({
   const renderSuggestions = ({ item }: { item: string }) => {
     return (
       <Pressable
-        className="px-2 py-2 bg-gray-200 border-b border-black active:bg-gray-400"
+        className="px-2 py-1 bg-gray-200 border-b border-black active:bg-gray-400"
         
         onPress={() => {
           onSuggestionAccept(item);
@@ -53,12 +53,14 @@ const BusStopSearchBar: React.FC<BusStopSearchBarProps> = ({
     );
   };
   return (
-    <View className="items-center h-full">
-      <Text className="text-base text-white text-center m-1">{title}</Text>
-      <View className="flex-row h-full w-full mt-3 mb-1 px-5 justify-between ">
-        <View className="h-full">
+    <View className="items-center h-full w-full">
+      <View className="flex-row left-5">
+      <Text className="text-xl text-white mt-3 mb-1 w-full font-semibold">{title}</Text>
+      </View>
+      <View className="flex-row h-full w-full mt-3 mb-1 px-3 justify-between ">
+        <View style={{ width: 210 }} className="h-full">
           <TextInput
-            className="w-44 bg-gray-400 px-3 text-sm text-white text-center rounded-full focus:border-2 focus:border-slate-200"
+            className="bg-gray-400 px-3 py-1 text-sm text-white text-left rounded-full focus:border-2 focus:border-slate-300"
             value={userInput}
             onChangeText={(text) => {
               onTextChange(text);
@@ -72,8 +74,11 @@ const BusStopSearchBar: React.FC<BusStopSearchBarProps> = ({
             onSubmitEditing={onConfirm}
             selectTextOnFocus={true}
           />
+          <Text style={{fontSize: 13, lineHeight: 19}} className="text-white text-center mx-2 font-light italic">
+            Try "Bishan" or "53239".
+          </Text>
           {showSuggestions && userInput.length >= 5 && (
-            <View className="w-44 h-24 mt-8 flex-1 absolute rounded-xl z-20 bg-gray-300 ">
+            <View className="h-20 mt-9 w-full flex-1 absolute rounded-xl z-20 bg-gray-300 ">
               <FlatList
                 className="p-2 h-full flex-1 overflow-y-scroll"
                 data={filteredBusStopArray}
@@ -84,7 +89,9 @@ const BusStopSearchBar: React.FC<BusStopSearchBarProps> = ({
             </View>
           )}
         </View>
-        <SimpleButton title="Go" onPress={onConfirm} />
+        <View className="h-full px-3">
+          <SimpleButton title="Go" onPress={onConfirm} />
+        </View>
       </View>
     </View>
   );

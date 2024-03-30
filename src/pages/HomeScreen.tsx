@@ -50,7 +50,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
         </Text>
         <View
           style={{ height: "18%" }}
-          className="w-3/4 mt-5 pt-1 pb-14 z-10 bg-slate-600 shadow-2xl shadow-white border-2 border-slate-500 items-center rounded-2xl"
+          className="w-3/4 mt-5 pt-1 pb-14 z-10 bg-slate-600 shadow-2xl shadow-white border-4 border-slate-500 items-center rounded-2xl"
         >
           <BusStopSearchBar
             title="Quick Search"
@@ -61,10 +61,6 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
               handleSearchConfirm(busstopId);
             }}
           />
-          <Text className="text-white text-center text-sm mx-8 font-light">
-            {busStopArray?.length} bus stops across Singapore, right at your
-            fingertips.
-          </Text>
         </View>
         <View className="flex flex-row flex-wrap justify-center mt-10">
           <TiledButton
