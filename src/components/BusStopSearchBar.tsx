@@ -38,7 +38,7 @@ const BusStopSearchBar: React.FC<BusStopSearchBarProps> = ({
   const renderSuggestions = ({ item }: { item: string }) => {
     return (
       <Pressable
-        className="px-2 py-3 bg-gray-200 border-b border-black active:opacity-75"
+        className="px-2 py-2 bg-gray-200 border-b border-black active:bg-gray-400"
         
         onPress={() => {
           onSuggestionAccept(item);
@@ -46,7 +46,7 @@ const BusStopSearchBar: React.FC<BusStopSearchBarProps> = ({
           setShowSuggestions(false);
         }}
       >
-        <Text numberOfLines={1} className="text-black text-base">
+        <Text numberOfLines={1} className="text-black text-sm">
           {item}
         </Text>
       </Pressable>
@@ -54,11 +54,11 @@ const BusStopSearchBar: React.FC<BusStopSearchBarProps> = ({
   };
   return (
     <View className="items-center h-full">
-      <Text className="text-lg text-white text-center">{title}</Text>
-      <View className="flex-row h-full w-full mt-3 mb-1 px-3 justify-between ">
+      <Text className="text-base text-white text-center m-1">{title}</Text>
+      <View className="flex-row h-full w-full mt-3 mb-1 px-5 justify-between ">
         <View className="h-full">
           <TextInput
-            className="w-48 bg-gray-400 px-3 text-sm text-white text-center rounded-full focus:border-2 focus:border-slate-200"
+            className="w-44 bg-gray-400 px-3 text-sm text-white text-center rounded-full focus:border-2 focus:border-slate-200"
             value={userInput}
             onChangeText={(text) => {
               onTextChange(text);
@@ -68,14 +68,18 @@ const BusStopSearchBar: React.FC<BusStopSearchBarProps> = ({
             autoFocus={false}
             inputMode="text"
             onFocus={() => {setShowSuggestions(true);}}
+            onBlur={() => {setShowSuggestions(false);}}
+            onSubmitEditing={onConfirm}
+            selectTextOnFocus={true}
           />
           {showSuggestions && userInput.length >= 5 && (
-            <View className="w-52 h-40 mt-8 absolute rounded-xl z-10 bg-gray-300 ">
+            <View className="w-44 h-24 mt-8 flex-1 absolute rounded-xl z-20 bg-gray-300 ">
               <FlatList
-                className="p-2 h-full overflow-y-scroll"
+                className="p-2 h-full flex-1 overflow-y-scroll"
                 data={filteredBusStopArray}
                 renderItem={renderSuggestions}
                 keyExtractor={(item) => item}
+                keyboardShouldPersistTaps="always"
               />
             </View>
           )}

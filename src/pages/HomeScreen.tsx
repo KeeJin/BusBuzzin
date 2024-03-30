@@ -14,6 +14,31 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   const [busstopId, setBusstopId] = useState<string>("");
   const { busStopMap, busStopArray } = useBusStopDb();
 
+  const handleSearchConfirm = (id: string) => {
+    setBusstopId(id);
+    if (id === "") {
+      return;
+    }
+    let shouldSearch = false;
+    if (busStopMap && busStopMap.has(id)) {
+      shouldSearch = true;
+    }
+
+    if (id.length >= 5 && busStopMap && busStopMap.has(id.slice(-6, -1))) {
+      shouldSearch = true;
+      id = id.slice(-6, -1);
+    }
+
+    if (shouldSearch) {
+      navigation.navigate("BusStopDashboard", {
+        id: id,
+      });
+    } else {
+      alert("Invalid bus stop entry!");
+    }
+    Keyboard.dismiss();
+  };
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View className="bg-slate-800 w-full h-full items-center justify-center">
@@ -21,30 +46,25 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
           BusBuzzin
         </Text>
         <Text className="text-lg text-white text-center font-light mb-3">
-          Your friendly bus arrival app.
+          Your friendly bus arrival app
         </Text>
-        <View className="w-3/4 h-1/6 mt-5 pt-3 pb-3 z-10 bg-slate-600 shadow-2xl shadow-white border-2 border-slate-500 items-center rounded-2xl">
+        <View
+          style={{ height: "18%" }}
+          className="w-3/4 mt-5 pt-1 pb-14 z-10 bg-slate-600 shadow-2xl shadow-white border-2 border-slate-500 items-center rounded-2xl"
+        >
           <BusStopSearchBar
             title="Quick Search"
             userInput={busstopId}
             onTextChange={setBusstopId}
-            onSuggestionAccept={(suggestion) => {
-              setBusstopId(suggestion);
-            }}
+            onSuggestionAccept={handleSearchConfirm}
             onConfirm={() => {
-              if (busstopId === "") {
-                return;
-              }
-              if (busStopArray && !busStopArray.includes(busstopId)) {
-                alert("Invalid bus stop code");
-                return;
-              }
-              Keyboard.dismiss();
-              navigation.navigate("BusStopDashboard", {
-                id: busstopId.slice(-6, -1),
-              });
+              handleSearchConfirm(busstopId);
             }}
           />
+          <Text className="text-white text-center text-sm mx-8 font-light">
+            {busStopArray?.length} bus stops across Singapore, right at your
+            fingertips.
+          </Text>
         </View>
         <View className="flex flex-row flex-wrap justify-center mt-10">
           <TiledButton
