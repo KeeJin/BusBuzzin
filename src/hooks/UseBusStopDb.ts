@@ -1,21 +1,6 @@
 import { useEffect, useState } from 'react';
 import * as busStopsJson from '../assets/busstops.json';
-
-interface BusStop {
-  BusStopCode: string;
-  RoadName: string;
-  Description: string;
-  Latitude: number;
-  Longitude: number;
-};
-
-type BusStopMap = Map<string, BusStop>;
-type BusStopArray = string[];
-
-interface BusStopData {
-  busStopMap: BusStopMap | undefined;
-  busStopArray: BusStopArray | undefined;
-};
+import { BusStop, BusStopMap, BusStopArray, BusStopData } from '../types';
 
 const useBusStopDb = (): BusStopData => {
   const [busStopMap, setBusStopMap] = useState<BusStopMap>();

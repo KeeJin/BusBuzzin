@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, FlatList, Pressable } from "react-native";
-import SimpleButton from "./ui/SimpleButton";
+import SearchButton from "./ui/SearchButton";
 import useBusStopDb from "../hooks/UseBusStopDb";
 
 interface BusStopSearchBarProps {
@@ -39,7 +39,6 @@ const BusStopSearchBar: React.FC<BusStopSearchBarProps> = ({
     return (
       <Pressable
         className="px-2 py-1 bg-gray-200 border-b border-black active:bg-gray-400"
-        
         onPress={() => {
           onSuggestionAccept(item);
           filterBusStops(item);
@@ -54,11 +53,15 @@ const BusStopSearchBar: React.FC<BusStopSearchBarProps> = ({
   };
   return (
     <View className="items-center h-full w-full">
-      <View className="flex-row left-5">
-      <Text className="text-xl text-white mt-3 mb-1 w-full font-semibold">{title}</Text>
-      </View>
+      {title.length !== 0 && (
+        <View className="flex-row left-5">
+          <Text className="text-xl text-white mt-3 mb-1 w-full font-semibold">
+            {title}
+          </Text>
+        </View>
+      )}
       <View className="flex-row h-full w-full mt-3 mb-1 px-3 justify-between ">
-        <View style={{ width: 210 }} className="h-full">
+        <View style={{ width: "77%" }} className="h-full mr-2">
           <TextInput
             className="bg-gray-400 px-3 py-1 text-sm text-white text-left rounded-full focus:border-2 focus:border-slate-300"
             value={userInput}
@@ -69,12 +72,19 @@ const BusStopSearchBar: React.FC<BusStopSearchBarProps> = ({
             placeholder="Search for bus stop..."
             autoFocus={false}
             inputMode="text"
-            onFocus={() => {setShowSuggestions(true);}}
-            onBlur={() => {setShowSuggestions(false);}}
+            onFocus={() => {
+              setShowSuggestions(true);
+            }}
+            onBlur={() => {
+              setShowSuggestions(false);
+            }}
             onSubmitEditing={onConfirm}
             selectTextOnFocus={true}
           />
-          <Text style={{fontSize: 13, lineHeight: 24}} className="text-white text-left mx-2 font-light italic">
+          <Text
+            style={{ fontSize: 13, lineHeight: 24 }}
+            className="text-white text-left mx-2 font-light italic"
+          >
             Try "Bishan" or "53239".
           </Text>
           {showSuggestions && userInput.length >= 5 && (
@@ -89,8 +99,8 @@ const BusStopSearchBar: React.FC<BusStopSearchBarProps> = ({
             </View>
           )}
         </View>
-        <View className="h-full px-3">
-          <SimpleButton title="Go" onPress={onConfirm} />
+        <View className="h-full pr-3">
+          <SearchButton onPress={onConfirm} />
         </View>
       </View>
     </View>
