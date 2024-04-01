@@ -87,7 +87,7 @@ const BusStopSearchBar: React.FC<BusStopSearchBarProps> = ({
           >
             Try "Bishan" or "53239".
           </Text>
-          {showSuggestions && userInput.length >= 5 && (
+          {showSuggestions && userInput.length >= 3 && (
             <View className="h-20 mt-9 w-full flex-1 absolute rounded-xl z-20 bg-gray-300 ">
               <FlatList
                 className="p-2 h-full flex-1 overflow-y-scroll"
