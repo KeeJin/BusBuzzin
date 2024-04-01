@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { View, Text, Keyboard, TouchableWithoutFeedback } from "react-native";
 import * as Location from "expo-location";
-import MapView, { Callout, Marker } from "react-native-maps";
+import MapView, { Callout, Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import GetBusStopsNearby from "../utils/GetBusStopsNearby";
 import { BusStop, BusStopData } from "../types";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -21,7 +21,7 @@ const MapScreen: React.FC<MapScreenProps> = ({ navigation }) => {
   const [nearbyBusStops, setNearbyBusStops] = useState<BusStop[]>([]);
   const { busStopMap } = useBusStopDb() as BusStopData;
   const [busstopId, setBusstopId] = useState<string>("");
-  const [mapViewRef, setMapViewRef] = useState<MapView | null>(null);
+  const mapViewRef = useRef<MapView | null>(null);
 
   const handleSearchConfirm = (id: string) => {
     setBusstopId(id);
@@ -50,7 +50,7 @@ const MapScreen: React.FC<MapScreenProps> = ({ navigation }) => {
         },
       } as Location.LocationObject;
       setLocation(newLocation);
-      mapViewRef?.animateCamera(
+      mapViewRef.current?.animateCamera(
         {
           center: {
             latitude: newLocation.coords.latitude,
@@ -128,9 +128,8 @@ const MapScreen: React.FC<MapScreenProps> = ({ navigation }) => {
       {location && (
         <MapView
           className="w-full h-4/5 mb-2"
-          ref={(ref) => {
-            setMapViewRef(ref);
-          }}
+          ref={mapViewRef}
+          provider={PROVIDER_GOOGLE}
           initialCamera={{
             center: {
               latitude: location?.coords.latitude || 0,
