@@ -49,10 +49,6 @@ A SG-based bus arrival mobile app with a focus on delivering push notifications 
 
 <img alt="notifications" src="app_showcase/v1.1.0/notifications.jpg" width="250">
 
-## Known Bugs/Issues
-- Alert notifications do not consistently fire on time
-- Occasional screen flickering
-
 ## APK Release
 
 - v1.1.0: [APK download](https://www.dropbox.com/scl/fi/o5xuwqjcvkejuqv3aw6iz/BusBuzz_v1.1.0.apk?rlkey=xl6f1m1ondh1e5raz6swhbql5&dl=0)
