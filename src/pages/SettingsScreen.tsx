@@ -1,7 +1,5 @@
 import React from "react";
 import { View, Text } from "react-native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ConfirmationModal from "../components/ConfirmationModal";
 import SettingsCard from "../components/ui/SettingsCard";
@@ -34,7 +32,7 @@ const SettingsScreen: React.FC = () => {
 
   return (
     <View className="bg-slate-800 flex h-full px-6 py-10">
-      <Text className="text-white text-3xl text-left pl-2 mb-5">Settings</Text>
+      <Text className="text-white text-3xl text-left pl-2 mt-7 mb-3">Settings</Text>
       <SettingsCard title="Clear Saved Bus Stops" onPress={() => {
           setClearBusStopsModalVisible(true);
         }} />

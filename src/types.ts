@@ -3,8 +3,25 @@ type RootStackParamList = {
   Home: undefined;
   SavedBusStops: undefined;
   Settings: undefined;
-  SavedBusAlertsScreen: undefined;
+  SavedBusAlerts: undefined;
+  Map: undefined;
 };
+
+interface BusStop {
+  BusStopCode: string;
+  RoadName: string;
+  Description: string;
+  Latitude: number;
+  Longitude: number;
+}
+
+type BusStopMap = Map<string, BusStop>;
+type BusStopArray = string[];
+
+interface BusStopData {
+  busStopMap: BusStopMap | undefined;
+  busStopArray: BusStopArray | undefined;
+}
 
 interface BusAlert {
   busstopId: string;
@@ -17,4 +34,12 @@ type BusStopGeneralInfo = {
   description: string;
 };
 
-export { RootStackParamList, BusAlert, BusStopGeneralInfo };
+export {
+  RootStackParamList,
+  BusAlert,
+  BusStopGeneralInfo,
+  BusStop,
+  BusStopData,
+  BusStopMap,
+  BusStopArray,
+};

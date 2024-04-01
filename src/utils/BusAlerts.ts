@@ -55,7 +55,7 @@ const removeBusAlertSettings = async (busstopId: string, busNumber: string) => {
     console.log("Settings before removal: ", alerts);
     alerts = alerts.filter(
       (alert: BusAlert) =>
-        alert.busstopId! == busstopId && alert.busNumber !== busNumber
+        !(alert.busstopId === busstopId && alert.busNumber === busNumber)
     );
     console.log("Settings after removal: ", alerts);
     await AsyncStorage.setItem("busAlerts", JSON.stringify(alerts));
