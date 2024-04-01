@@ -10,6 +10,7 @@ A SG-based bus arrival mobile app with a focus on delivering push notifications 
 - React Native Expo implementation
 - Nativewind for styling
 - React Query for API fetching from [LTA](https://datamall.lta.gov.sg/content/datamall/en/dynamic-data.html)
+- React Native Maps for map integration
 
 ## Feature Showcase <img alt="logo" src="src/assets/logo.png" width="25">
 
