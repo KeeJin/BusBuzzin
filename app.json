@@ -14,9 +14,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
@@ -29,6 +27,9 @@
             }
           }
         }
+      },
+      "config": {
+        "googleMapsApiKey": "AIzaSyD5gIizY0MRHltCUcPsPChKWyO7gAjKsG8"
       }
     },
     "android": {
@@ -37,7 +38,12 @@
         "backgroundColor": "#9ef4ff"
       },
       "package": "com.keeejinnn.BusBuzzin",
-      "softwareKeyboardLayoutMode": "pan"
+      "softwareKeyboardLayoutMode": "pan",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyD5gIizY0MRHltCUcPsPChKWyO7gAjKsG8"
+        }
+      }
     },
     "web": {
       "favicon": "./src/assets/favicon.png"
@@ -49,6 +55,13 @@
           "android": {
             "usesCleartextTraffic": true
           }
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location.",
+          "isAndroidForegroundServiceEnabled": true
         }
       ]
     ],

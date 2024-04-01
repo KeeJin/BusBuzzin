@@ -44,12 +44,12 @@ const SavedBusStopsScreen: React.FC<SavedBusStopsScreenProps> = ({
   useEffect(() => {
     const fetchSavedBusStops = async () => {
       if (triggerRefresh) {
-        console.log("triggerRefresh is true");
+        // console.log("triggerRefresh is true");
         try {
           const savedBusStopsRaw = await AsyncStorage.getItem("savedBusStops");
           if (savedBusStopsRaw) {
             setSavedBusStops(JSON.parse(savedBusStopsRaw));
-            console.log("Updated saved bus stops: ", savedBusStops);
+            // console.log("Updated saved bus stops: ", savedBusStops);
           }
         } catch (error) {
           console.error("Error fetching saved bus stops:", error);

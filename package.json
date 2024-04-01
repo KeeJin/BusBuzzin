@@ -28,7 +28,9 @@
     "react-native-screens": "~3.29.0",
     "react-native-swipe-list-view": "^3.2.9",
     "react-native-web": "~0.19.6",
-    "react-query": "^3.39.3"
+    "react-query": "^3.39.3",
+    "expo-location": "~16.5.5",
+    "react-native-maps": "1.10.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
