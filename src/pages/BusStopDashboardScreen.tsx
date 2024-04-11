@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { View, Text } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useQueryClient } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import { RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import useBusArrivalQuery from "../hooks/UseBusArrivalQuery";
 import useBusStopDb from "../hooks/UseBusStopDb";
-import { RootStackParamList } from "../types";
+import { BusAlert, RootStackParamList } from "../types";
 import BookmarkButton from "../components/ui/BookmarkButton";
 import BusServiceCarousel from "../components/BusServiceCarousel";
+import { getBusAlertSettings } from "../utils/BusAlerts";
 
 type BusStopDashboardScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, "BusStopDashboard">;
@@ -25,6 +26,7 @@ const BusStopDashboardScreen: React.FC<BusStopDashboardScreenProps> = ({
 
   const [shouldGrab, setShouldGrab] = useState<boolean>(true);
   const [isSaved, setIsSaved] = useState<boolean | undefined>(undefined);
+  const [savedBusAlerts, setSavedBusAlerts] = useState<BusAlert[]>([]); 
   const [busStopName, setBusStopName] = useState<string | undefined>("");
   const queryClient = useQueryClient();
   const { busStopMap } = useBusStopDb();
@@ -34,6 +36,25 @@ const BusStopDashboardScreen: React.FC<BusStopDashboardScreenProps> = ({
     () => {
       setShouldGrab(false);
       queryClient.invalidateQueries(["busArrivalData"]);
+    }
+  );
+  useQuery(
+    ["savedBusAlerts"], // Unique key for the query
+    async (): Promise<any> => {
+      // Fetch saved alerts
+      const busAlertSettings = await getBusAlertSettings("");
+      // console.log("All alerts checked!");
+      setSavedBusAlerts(busAlertSettings);
+    },
+    {
+      enabled: true,
+      refetchInterval: 500, // Refetch every 0.5 seconds
+      onError: () => {
+        console.error("Error fetching bus alerts");
+      },
+      // onSuccess: () => {
+      //   console.log("Alerts checked successfully");
+      // },
     }
   );
 
@@ -135,6 +156,7 @@ const BusStopDashboardScreen: React.FC<BusStopDashboardScreenProps> = ({
         )}
         {data && !isLoading && !isError ? (
           <BusServiceCarousel
+            savedBusAlerts={savedBusAlerts}
             busstopId={busstopId}
             busServiceMapping={data}
             isRefreshing={isLoading}

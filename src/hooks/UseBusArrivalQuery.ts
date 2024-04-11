@@ -51,8 +51,11 @@ const useBusArrivalQuery = (
     },
     {
       enabled: !!busstopId, // Only fetch data if busstopId is truthy
-      refetchInterval: 0, // Refetch every 5 seconds
+      refetchInterval: 8000, // Refetch every 8 seconds
       onError: callbackFn,
+      onSuccess: () => {
+        // console.log("Data fetched successfully");
+      },
       // onSuccess: callbackFn,
     }
   );
