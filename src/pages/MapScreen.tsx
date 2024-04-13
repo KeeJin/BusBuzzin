@@ -1,5 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
-import { View, Text, Keyboard, TouchableWithoutFeedback } from "react-native";
+import {
+  View,
+  Text,
+  Keyboard,
+  TouchableWithoutFeedback,
+  ActivityIndicator,
+} from "react-native";
 import * as Location from "expo-location";
 import MapView, { Callout, Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import GetBusStopsNearby from "../utils/GetBusStopsNearby";
@@ -83,11 +89,11 @@ const MapScreen: React.FC<MapScreenProps> = ({ navigation }) => {
   // });
 
   useEffect(() => {
-    const getLocation = async () => {
+    const fetchLocation = async () => {
       let location = await Location.getCurrentPositionAsync({});
       setLocation(location);
     };
-    getLocation();
+    fetchLocation();
   }, []);
 
   useEffect(() => {
@@ -125,7 +131,7 @@ const MapScreen: React.FC<MapScreenProps> = ({ navigation }) => {
           </View>
         </View>
       </TouchableWithoutFeedback>
-      {location && (
+      {location ? (
         <MapView
           className="w-full h-4/5 mb-2"
           ref={mapViewRef}
@@ -154,8 +160,12 @@ const MapScreen: React.FC<MapScreenProps> = ({ navigation }) => {
             } as Location.LocationObject;
             setLocation(location);
           }}
-          onPress={() => {Keyboard.dismiss();}}
-          onPanDrag={() => {Keyboard.dismiss();}}
+          onPress={() => {
+            Keyboard.dismiss();
+          }}
+          onPanDrag={() => {
+            Keyboard.dismiss();
+          }}
           customMapStyle={mapStyle}
         >
           {nearbyBusStops.map((busStop) => (
@@ -187,6 +197,10 @@ const MapScreen: React.FC<MapScreenProps> = ({ navigation }) => {
             </Marker>
           ))}
         </MapView>
+      ) : (
+        <View className="w-full h-full items-center">
+          <ActivityIndicator size={64} color="#fff" />
+        </View>
       )}
     </View>
   );

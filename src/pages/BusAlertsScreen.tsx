@@ -11,6 +11,7 @@ import {
   removeBusAlertSettings,
 } from "../utils/BusAlerts";
 import { BusAlert } from "../types";
+import Toast from "react-native-root-toast";
 
 type SavedBusAlertsScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, "SavedBusAlerts">;
@@ -98,6 +99,15 @@ const SavedBusAlertsScreen: React.FC<SavedBusAlertsScreenProps> = ({navigation})
                     onPress={async () => {
                       // console.log("Deleting alert for bus", item.busNumber);
                       removeBusAlertSettings(item.busstopId, item.busNumber);
+                      Toast.show("Deleted alert for bus " + item.busNumber, {
+                        position: Toast.positions.BOTTOM,
+                        shadow: true,
+                        animation: true,
+                        hideOnPress: true,
+                        delay: 0,
+                        backgroundColor: "rgba(0,0,0,0.7)",
+                        textColor: "white",
+                      });
                     }}
                   >
                     <MaterialIcons name="delete" size={34} color="white" />
