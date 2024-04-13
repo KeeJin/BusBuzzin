@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { QueryClient, QueryClientProvider } from "react-query";
+import { QueryClient, QueryClientProvider, useQuery } from "react-query";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { registerRootComponent } from "expo";
@@ -110,7 +110,7 @@ const allowsNotificationsAsync = async (): Promise<boolean> => {
   );
 };
 
-const requestNotificationsIfNotGranted = async () => {
+const requestPermissionsIfNotGranted = async () => {
   const allowed = await allowsNotificationsAsync();
   if (!allowed) {
     await Notifications.requestPermissionsAsync({
@@ -147,12 +147,89 @@ const createNotificationChannelIfNotExists = async () => {
   });
 };
 
-export default function App() {
+function App() {
+  useQuery(
+    "savedBusAlerts", // Unique key for the query
+    async () => {
+      // Fetch saved alerts
+      const busAlertSettings = await getBusAlertSettings("");
+
+      const promises = busAlertSettings.map(async (busAlert) => {
+        const busStopCode = busAlert.busstopId;
+        const busNumber = busAlert.busNumber;
+        const notificationTime = busAlert.notificationTime;
+
+        const response = await FetchInfoByBusStopCode(busStopCode as string);
+        if (!response.ok) {
+          console.error("Network response was not ok");
+          return;
+        }
+
+        const data = await response.json();
+        // console.log("Data fetched for bus stop %s", busStopCode);
+        // for (const service of data["Services"]) {
+        //   console.log("Bus: %s", service["ServiceNo"]);
+        //   console.log("Service: %s", service["NextBus"]["EstimatedArrival"]);
+        // }
+        if (data["Services"] !== undefined) {
+          const busArrivals = data["Services"].find(
+            (service: any) => service["ServiceNo"] === busNumber
+          )?.NextBus;
+
+          if (!busArrivals) return;
+          // console.log(
+          //   "Calculating ETA for bus: %s at bus stop %s",
+          //   busNumber,
+          //   busStopCode
+          // );
+          const eta = calculateMinutesToArrival(
+            busArrivals["EstimatedArrival"]
+          );
+          if (eta <= notificationTime) {
+            console.log("Bus is arriving soon!");
+            Notifications.scheduleNotificationAsync({
+              content: {
+                title: "Bus is arriving soon!",
+                body: `Bus ${busNumber} is arriving in ${eta} minutes`,
+                priority: Notifications.AndroidNotificationPriority.MAX,
+                vibrate: [0, 500, 500, 500, 500, 500, 500, 3000],
+                sound: "default",
+              },
+              trigger: null,
+            });
+
+            // Remove the alert
+            console.log(
+              "Alert fired! Removing alert for bus: %s at bus stop %s",
+              busNumber,
+              busStopCode
+            );
+            await removeBusAlertSettings(busStopCode as string, busNumber);
+          }
+        }
+      });
+      await Promise.all(promises);
+      // console.log("All alerts checked!");
+      return (await getBusAlertSettings(""));
+    },
+    {
+      enabled: true,
+      refetchInterval: 15000, // Refetch every 15 seconds
+      onError: () => {
+        console.error("Error fetching bus alerts");
+      },
+      // onSuccess: () => {
+      //   console.log("Alerts checked successfully");
+      // },
+    }
+  );
+
   useEffect(() => {
     const init = async () => {
-      await requestNotificationsIfNotGranted();
+      await requestPermissionsIfNotGranted();
       await createNotificationChannelIfNotExists();
       await registerBackgroundFetchAsync();
+      console.log("Initialisation complete!");
     };
     init();
   }, []);
@@ -198,4 +275,12 @@ export default function App() {
   );
 }
 
-registerRootComponent(App);
+export default function RootApp() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <App />
+    </QueryClientProvider>
+  );
+}
+
+registerRootComponent(RootApp);

@@ -43,7 +43,10 @@
         "googleMaps": {
           "apiKey": "AIzaSyD5gIizY0MRHltCUcPsPChKWyO7gAjKsG8"
         }
-      }
+      },
+      "permissions": [
+        "android.permission.SCHEDULE_EXACT_ALARM"
+      ]
     },
     "web": {
       "favicon": "./src/assets/favicon.png"

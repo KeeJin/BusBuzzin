@@ -10,6 +10,7 @@ import {
 import { BusAlert } from "../types";
 
 interface BusServiceCarouselProps {
+  savedBusAlerts: BusAlert[];
   busstopId: string;
   busServiceMapping: Map<string, string[]>[];
   isRefreshing: boolean;
@@ -22,25 +23,21 @@ interface SelectedBusService {
 }
 
 const BusServiceCarousel: React.FC<BusServiceCarouselProps> = ({
+  savedBusAlerts,
   busstopId,
   busServiceMapping,
   isRefreshing,
   onRefresh,
 }) => {
   const [selectedBusService, setSelectedBusService] =
-    useState<SelectedBusService>({busService: "", nextBusArrival: ""});
+    useState<SelectedBusService>({ busService: "", nextBusArrival: "" });
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [enabledAlerts, setEnabledAlerts] = useState<string[]>([]);
 
   // Effect to fetch bus alert settings on component mount
   useEffect(() => {
-    const fetchLatestBusAlerts = async () => {
-      const alerts = await getBusAlertSettings(busstopId);
-      // console.log("Fetched bus alerts on component mount: ", alerts);
-      setEnabledAlerts(alerts.map((alert: BusAlert) => alert.busNumber));
-    };
-    fetchLatestBusAlerts();
-  }, []);
+    setEnabledAlerts(savedBusAlerts.map((alert: BusAlert) => alert.busNumber));
+  }, [savedBusAlerts]);
 
   const renderBusTiming = ({ item }: { item: Map<string, string[]> }) => {
     const handleEnableAlert = (busService: string, nextBusArrival: string) => {
