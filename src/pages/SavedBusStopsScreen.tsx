@@ -7,6 +7,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../types";
 import useBusStopDb from "../hooks/UseBusStopDb";
 import { BusStopGeneralInfo } from "../types";
+import Toast from "react-native-root-toast";
 
 type SavedBusStopsScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, "SavedBusStops">;
@@ -124,6 +125,16 @@ const SavedBusStopsScreen: React.FC<SavedBusStopsScreenProps> = ({
                     onPress={async () => {
                       await removeSavedBusStop(item.busStopCode);
                       setTriggerRefresh(true);
+                      Toast.show("Bus stop " + item.description + " removed from saved list.", {
+                        duration: Toast.durations.SHORT,
+                        position: Toast.positions.BOTTOM,
+                        shadow: true,
+                        animation: true,
+                        hideOnPress: true,
+                        delay: 0,
+                        backgroundColor: "rgba(0,0,0,0.7)",
+                        textColor: "white",
+                      });
                     }}
                   >
                     <MaterialIcons name="delete" size={34} color="white" />

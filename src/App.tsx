@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { QueryClient, QueryClientProvider, useQuery } from "react-query";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { RootSiblingParent } from "react-native-root-siblings";
 import { registerRootComponent } from "expo";
 import { StatusBar } from "expo-status-bar";
 import * as BackgroundFetch from "expo-background-fetch";
@@ -212,7 +213,7 @@ function App() {
       });
       await Promise.all(promises);
       // console.log("All alerts checked!");
-      return (await getBusAlertSettings(""));
+      return await getBusAlertSettings("");
     },
     {
       enabled: true,
@@ -280,7 +281,9 @@ function App() {
 export default function RootApp() {
   return (
     <QueryClientProvider client={queryClient}>
-      <App />
+      <RootSiblingParent>
+        <App />
+      </RootSiblingParent>
     </QueryClientProvider>
   );
 }

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { View, Modal, Text, TouchableWithoutFeedback } from "react-native";
+import Toast from 'react-native-root-toast'
 import { Picker } from "@react-native-picker/picker";
 import ModalButton from "./ui/ModalButton";
 
@@ -21,6 +22,16 @@ const AlertModal: React.FC<AlertModalProps> = ({
   const handleConfirm = () => {
     if (notificationTime) {
       onConfirm(notificationTime);
+      Toast.show('Alert time set!', {
+        duration: Toast.durations.SHORT,
+        position: Toast.positions.BOTTOM,
+        shadow: true,
+        animation: true,
+        hideOnPress: true,
+        delay: 0,
+        backgroundColor: 'rgba(0,0,0,0.7)',
+        textColor: 'white'
+      });
       onClose();
     }
   };

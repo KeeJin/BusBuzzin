@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { View, Text } from "react-native";
+import Toast from "react-native-root-toast";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useQuery, useQueryClient } from "react-query";
 import { RouteProp } from "@react-navigation/native";
@@ -118,6 +119,24 @@ const BusStopDashboardScreen: React.FC<BusStopDashboardScreenProps> = ({
             JSON.stringify([busstopId])
           );
         }
+
+        let toastMsg = "";
+        if (isSaved) {
+          toastMsg = "Bus stop removed from saved list.";
+        } else {
+          toastMsg = "Bus stop saved successfully!";
+        }
+        Toast.show(toastMsg, {
+          duration: Toast.durations.SHORT,
+          position: Toast.positions.BOTTOM,
+          shadow: true,
+          animation: true,
+          hideOnPress: true,
+          delay: 0,
+          backgroundColor: "rgba(0,0,0,0.7)",
+          textColor: "white",
+        });
+
         setIsSaved(!isSaved);
       } catch (error) {
         console.error("Error saving bus stop: ", error);
