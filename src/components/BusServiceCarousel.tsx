@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { View, Text, FlatList, RefreshControl, Vibration } from "react-native";
 import AlertModal from "./AlertModal";
 import AlertButton from "./ui/AlertButton";
@@ -8,6 +8,7 @@ import {
   saveBusAlertSettings,
 } from "../utils/BusAlerts";
 import { BusAlert } from "../types";
+import useBusStopDb from "../hooks/UseBusStopDb";
 
 interface BusServiceCarouselProps {
   savedBusAlerts: BusAlert[];
@@ -33,13 +34,51 @@ const BusServiceCarousel: React.FC<BusServiceCarouselProps> = ({
     useState<SelectedBusService>({ busService: "", nextBusArrival: "" });
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [enabledAlerts, setEnabledAlerts] = useState<string[]>([]);
+  const { busStopMap } = useBusStopDb();
+  const busServices = busStopMap?.get(busstopId)?.BusServices;
+  const [sortedBusServices, setSortedBusServices] = useState<string[]>([]);
+
+  useEffect(() => {
+    // sort bus services:
+    // 1. enabled alerts
+    // 2. other active bus services
+    // 3. inactive bus services
+    const sortBusServices = (busServices: string[] | undefined) => {
+      if (!busServices) return [];
+      const alertEnabledBuses: string[] = [];
+      const activeServices: string[] = [];
+      const inactiveServices: string[] = [];
+      busServices.forEach((service) => {
+        if (enabledAlerts.includes(service)) {
+          alertEnabledBuses.push(service);
+        } else if (busServiceMapping.find((mapping) => mapping.has(service))) {
+          activeServices.push(service);
+        } else {
+          inactiveServices.push(service);
+        }
+      }
+      );
+      const sorted = alertEnabledBuses.concat(activeServices).concat(inactiveServices);
+      // console.log("before sort", busServices);
+      // console.log("after sort", sorted);
+      setSortedBusServices(sorted);
+    };
+    
+    sortBusServices(busServices);
+  }, [enabledAlerts, busServices, busServiceMapping]);
 
   // Effect to fetch bus alert settings on component mount
   useEffect(() => {
     setEnabledAlerts(savedBusAlerts.map((alert: BusAlert) => alert.busNumber));
   }, [savedBusAlerts]);
 
-  const renderBusTiming = ({ item }: { item: Map<string, string[]> }) => {
+  const renderBusTiming = ({ item }: { item: string }) => {
+    // extract bus timings from busServiceMapping
+    // Map<string, string[]>[]
+    const busTimings = busServiceMapping
+      .find((mapping) => mapping.has(item))
+      ?.get(item) as string[];
+
     const handleEnableAlert = (busService: string, nextBusArrival: string) => {
       setSelectedBusService({ busService, nextBusArrival }); // Store selected bus service for modal
       Vibration.vibrate(50);
@@ -62,55 +101,66 @@ const BusServiceCarousel: React.FC<BusServiceCarouselProps> = ({
 
     return (
       <View className="mb-4">
-        {item != undefined &&
-          Array.from(item.entries()).map(([key, values], index) => (
-            <View
-              className="py-2 px-2 rounded-xl bg-slate-400 flex-row justify-between"
-              key={index}
-            >
-              <View>
-                <Text className="px-2 text-2xl pt-2 pb-3 font-semibold">
-                  Bus {key}
-                </Text>
-                <Text className="px-2">
-                  {values.map((value, index) => (
-                    <Text key={index}>
-                      {processTimeArrivalString(value)}
-                      {index === values.length - 1 ? "" : ", "}
-                    </Text>
-                  ))}
-                </Text>
-              </View>
-              <AlertButton
-                isAlertEnabled={isAlertEnabled(key)}
-                onPress={async () => {
-                  if (!isAlertEnabled(key)) {
-                    // console.log("Enabling alert for bus", key);
-                    handleEnableAlert(key, values[0]);
-                  } else {
-                    // Disable alert
-                    // console.log("Disabling alert for bus", key);
-                    await removeBusAlertSettings(busstopId, key);
-                    setEnabledAlerts(
-                      (await getBusAlertSettings(busstopId)).map(
-                        (alert: BusAlert) => alert.busNumber
-                      )
-                    );
-                  }
-                }}
-              />
+        {item && busTimings != undefined ? (
+          <View
+            className="py-2 px-2 rounded-xl bg-slate-400 flex-row justify-between"
+            key={item}
+          >
+            <View>
+              <Text className="px-2 text-2xl pt-2 pb-3 font-semibold">
+                Bus {item}
+              </Text>
+              <Text className="px-2 pb-1">
+                {busTimings.map((timing, index) => (
+                  <Text key={index}>
+                    {processTimeArrivalString(timing)}
+                    {index === busTimings.length - 1 ? "" : ", "}
+                  </Text>
+                ))}
+              </Text>
             </View>
-          ))}
+            <AlertButton
+              isAlertEnabled={isAlertEnabled(item)}
+              onPress={async () => {
+                if (!isAlertEnabled(item)) {
+                  // console.log("Enabling alert for bus", key);
+                  handleEnableAlert(item, busTimings[0]);
+                } else {
+                  // Disable alert
+                  // console.log("Disabling alert for bus", key);
+                  await removeBusAlertSettings(busstopId, item);
+                  setEnabledAlerts(
+                    (await getBusAlertSettings(busstopId)).map(
+                      (alert: BusAlert) => alert.busNumber
+                    )
+                  );
+                }
+              }}
+            />
+          </View>
+        ) : (
+          <View
+            className="py-2 px-2 rounded-xl bg-slate-500 flex-row justify-between"
+            key={item}
+          >
+            <View>
+              <Text className="px-2 text-2xl pt-2 pb-3 font-semibold">
+                Bus {item}
+              </Text>
+              <Text className="px-2 italic pb-1">Service Unavailable</Text>
+            </View>
+          </View>
+        )}
       </View>
     );
   };
 
   return (
     <View>
-      {busServiceMapping ? (
+      {sortedBusServices ? (
         <FlatList
           className="w-full h-full bg-slate-600 mt-5 mb-6 p-3 rounded-xl"
-          data={busServiceMapping}
+          data={sortedBusServices}
           renderItem={renderBusTiming}
           keyExtractor={(_, index: number) => index.toString()}
           refreshControl={

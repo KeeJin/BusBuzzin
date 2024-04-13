@@ -25,8 +25,8 @@ const BusStopDashboardScreen: React.FC<BusStopDashboardScreenProps> = ({
   /* ---------------------------------------------------------------- */
 
   const [shouldGrab, setShouldGrab] = useState<boolean>(true);
-  const [isSaved, setIsSaved] = useState<boolean | undefined>(undefined);
-  const [savedBusAlerts, setSavedBusAlerts] = useState<BusAlert[]>([]); 
+  const [isSaved, setIsSaved] = useState<boolean>(false);
+  const [savedBusAlerts, setSavedBusAlerts] = useState<BusAlert[]>([]);
   const [busStopName, setBusStopName] = useState<string | undefined>("");
   const queryClient = useQueryClient();
   const { busStopMap } = useBusStopDb();
@@ -72,10 +72,6 @@ const BusStopDashboardScreen: React.FC<BusStopDashboardScreenProps> = ({
     fetchBusStopName();
   }, [busStopMap]);
 
-  const onBookmarkPress = () => {
-    setIsSaved(!isSaved);
-  };
-
   useEffect(() => {
     const fetchSavedBusStops = async () => {
       try {
@@ -93,7 +89,7 @@ const BusStopDashboardScreen: React.FC<BusStopDashboardScreenProps> = ({
     fetchSavedBusStops();
   }, []);
 
-  useEffect(() => {
+  const onBookmarkPress = () => {
     const saveBusStop = async () => {
       if (isSaved === undefined) {
         return;
@@ -103,15 +99,13 @@ const BusStopDashboardScreen: React.FC<BusStopDashboardScreenProps> = ({
         if (savedBusStops) {
           const savedBusStopsArray = JSON.parse(savedBusStops) as string[];
           if (isSaved) {
-            if (!savedBusStopsArray.includes(busstopId)) {
-              console.log("Saving bus stop: ", busstopId);
-              savedBusStopsArray.push(busstopId);
-            }
-          } else {
             const index = savedBusStopsArray.indexOf(busstopId);
             if (index > -1) {
-              console.log("Removing bus stop: ", busstopId);
               savedBusStopsArray.splice(index, 1);
+            }
+          } else {
+            if (!savedBusStopsArray.includes(busstopId)) {
+              savedBusStopsArray.push(busstopId);
             }
           }
           await AsyncStorage.setItem(
@@ -124,12 +118,13 @@ const BusStopDashboardScreen: React.FC<BusStopDashboardScreenProps> = ({
             JSON.stringify([busstopId])
           );
         }
+        setIsSaved(!isSaved);
       } catch (error) {
         console.error("Error saving bus stop: ", error);
       }
     };
     saveBusStop();
-  }, [isSaved]);
+  };
 
   return (
     <View className="bg-slate-800 w-full h-full items-center justify-center px-6">
