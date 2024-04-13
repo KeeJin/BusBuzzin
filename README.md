@@ -58,6 +58,7 @@ A SG-based bus arrival mobile app with a focus on delivering push notifications 
 
 - v1.1.0: [APK download](https://www.dropbox.com/scl/fi/o5xuwqjcvkejuqv3aw6iz/BusBuzz_v1.1.0.apk?rlkey=xl6f1m1ondh1e5raz6swhbql5&dl=0)
 - v1.2.0: [APK download](https://www.dropbox.com/scl/fi/w4jv8pv3hgnk1ybdka124/BusBuzzin_v1.2.0.apk?rlkey=5dc4w79330dqqokvig577pfij&dl=0)
+- v1.3.0: [APK download](https://github.com/KeeJin/BusBuzzin/releases/download/v1.3.0/BusBuzzin_v1.3.0.apk)
 
 ## Attribution
 
