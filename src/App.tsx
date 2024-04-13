@@ -128,6 +128,8 @@ const requestPermissionsIfNotGranted = async () => {
     alert("Permission to access location was denied");
     return;
   }
+
+  await Location.requestBackgroundPermissionsAsync();
 };
 
 const notificationChannelExists = async () => {

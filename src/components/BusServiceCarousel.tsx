@@ -56,20 +56,25 @@ const BusServiceCarousel: React.FC<BusServiceCarouselProps> = ({
         } else {
           inactiveServices.push(service);
         }
-      }
-      );
-      const sorted = alertEnabledBuses.concat(activeServices).concat(inactiveServices);
+      });
+      const sorted = alertEnabledBuses
+        .concat(activeServices)
+        .concat(inactiveServices);
       // console.log("before sort", busServices);
       // console.log("after sort", sorted);
       setSortedBusServices(sorted);
     };
-    
+
     sortBusServices(busServices);
   }, [enabledAlerts, busServices, busServiceMapping]);
 
   // Effect to fetch bus alert settings on component mount
   useEffect(() => {
-    setEnabledAlerts(savedBusAlerts.map((alert: BusAlert) => alert.busNumber));
+    setEnabledAlerts(
+      savedBusAlerts
+        .filter((alert) => alert.busstopId === busstopId)
+        .map((alert) => alert.busNumber)
+    );
   }, [savedBusAlerts]);
 
   const renderBusTiming = ({ item }: { item: string }) => {
