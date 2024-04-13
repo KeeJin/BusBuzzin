@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import * as busStopsJson from '../assets/busstops.json';
+import * as busStopsJson from '../assets/bus_stops_postproc.json';
 import { BusStop, BusStopMap, BusStopArray, BusStopData } from '../types';
 
 const useBusStopDb = (): BusStopData => {
@@ -10,7 +10,7 @@ const useBusStopDb = (): BusStopData => {
     const fetchData = async () => {
       try {
         // Extract the 'value' array from the JSON data
-        const busStops: BusStop[] = busStopsJson["value"];
+        const busStops: BusStop[] = Array.from(Object.values(busStopsJson));
 
         // Convert the array to a Map
         const map = new Map<string, BusStop>();

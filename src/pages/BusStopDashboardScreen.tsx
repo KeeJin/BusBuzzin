@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { View, Text } from "react-native";
+import Toast from "react-native-root-toast";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useQueryClient } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import { RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import useBusArrivalQuery from "../hooks/UseBusArrivalQuery";
 import useBusStopDb from "../hooks/UseBusStopDb";
-import { RootStackParamList } from "../types";
+import { BusAlert, RootStackParamList } from "../types";
 import BookmarkButton from "../components/ui/BookmarkButton";
 import BusServiceCarousel from "../components/BusServiceCarousel";
+import { getBusAlertSettings } from "../utils/BusAlerts";
 
 type BusStopDashboardScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, "BusStopDashboard">;
@@ -24,7 +26,8 @@ const BusStopDashboardScreen: React.FC<BusStopDashboardScreenProps> = ({
   /* ---------------------------------------------------------------- */
 
   const [shouldGrab, setShouldGrab] = useState<boolean>(true);
-  const [isSaved, setIsSaved] = useState<boolean | undefined>(undefined);
+  const [isSaved, setIsSaved] = useState<boolean>(false);
+  const [savedBusAlerts, setSavedBusAlerts] = useState<BusAlert[]>([]);
   const [busStopName, setBusStopName] = useState<string | undefined>("");
   const queryClient = useQueryClient();
   const { busStopMap } = useBusStopDb();
@@ -34,6 +37,25 @@ const BusStopDashboardScreen: React.FC<BusStopDashboardScreenProps> = ({
     () => {
       setShouldGrab(false);
       queryClient.invalidateQueries(["busArrivalData"]);
+    }
+  );
+  useQuery(
+    ["savedBusAlerts"], // Unique key for the query
+    async (): Promise<any> => {
+      // Fetch saved alerts
+      const busAlertSettings = await getBusAlertSettings("");
+      // console.log("All alerts checked!");
+      setSavedBusAlerts(busAlertSettings);
+    },
+    {
+      enabled: true,
+      refetchInterval: 500, // Refetch every 0.5 seconds
+      onError: () => {
+        console.error("Error fetching bus alerts");
+      },
+      // onSuccess: () => {
+      //   console.log("Alerts checked successfully");
+      // },
     }
   );
 
@@ -50,10 +72,6 @@ const BusStopDashboardScreen: React.FC<BusStopDashboardScreenProps> = ({
     };
     fetchBusStopName();
   }, [busStopMap]);
-
-  const onBookmarkPress = () => {
-    setIsSaved(!isSaved);
-  };
 
   useEffect(() => {
     const fetchSavedBusStops = async () => {
@@ -72,7 +90,7 @@ const BusStopDashboardScreen: React.FC<BusStopDashboardScreenProps> = ({
     fetchSavedBusStops();
   }, []);
 
-  useEffect(() => {
+  const onBookmarkPress = () => {
     const saveBusStop = async () => {
       if (isSaved === undefined) {
         return;
@@ -82,15 +100,13 @@ const BusStopDashboardScreen: React.FC<BusStopDashboardScreenProps> = ({
         if (savedBusStops) {
           const savedBusStopsArray = JSON.parse(savedBusStops) as string[];
           if (isSaved) {
-            if (!savedBusStopsArray.includes(busstopId)) {
-              console.log("Saving bus stop: ", busstopId);
-              savedBusStopsArray.push(busstopId);
-            }
-          } else {
             const index = savedBusStopsArray.indexOf(busstopId);
             if (index > -1) {
-              console.log("Removing bus stop: ", busstopId);
               savedBusStopsArray.splice(index, 1);
+            }
+          } else {
+            if (!savedBusStopsArray.includes(busstopId)) {
+              savedBusStopsArray.push(busstopId);
             }
           }
           await AsyncStorage.setItem(
@@ -103,12 +119,31 @@ const BusStopDashboardScreen: React.FC<BusStopDashboardScreenProps> = ({
             JSON.stringify([busstopId])
           );
         }
+
+        let toastMsg = "";
+        if (isSaved) {
+          toastMsg = "Bus stop removed from saved list.";
+        } else {
+          toastMsg = "Bus stop saved successfully!";
+        }
+        Toast.show(toastMsg, {
+          duration: Toast.durations.SHORT,
+          position: Toast.positions.BOTTOM,
+          shadow: true,
+          animation: true,
+          hideOnPress: true,
+          delay: 0,
+          backgroundColor: "rgba(0,0,0,0.7)",
+          textColor: "white",
+        });
+
+        setIsSaved(!isSaved);
       } catch (error) {
         console.error("Error saving bus stop: ", error);
       }
     };
     saveBusStop();
-  }, [isSaved]);
+  };
 
   return (
     <View className="bg-slate-800 w-full h-full items-center justify-center px-6">
@@ -135,6 +170,7 @@ const BusStopDashboardScreen: React.FC<BusStopDashboardScreenProps> = ({
         )}
         {data && !isLoading && !isError ? (
           <BusServiceCarousel
+            savedBusAlerts={savedBusAlerts}
             busstopId={busstopId}
             busServiceMapping={data}
             isRefreshing={isLoading}

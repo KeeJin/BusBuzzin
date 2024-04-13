@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, Pressable, Vibration } from "react-native";
+import { useQuery } from "react-query";
 import { SwipeListView } from "react-native-swipe-list-view";
 import { MaterialIcons } from "@expo/vector-icons";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -10,6 +11,7 @@ import {
   removeBusAlertSettings,
 } from "../utils/BusAlerts";
 import { BusAlert } from "../types";
+import Toast from "react-native-root-toast";
 
 type SavedBusAlertsScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, "SavedBusAlerts">;
@@ -17,26 +19,27 @@ type SavedBusAlertsScreenProps = {
 
 const SavedBusAlertsScreen: React.FC<SavedBusAlertsScreenProps> = ({navigation}) => {
   const { busStopMap } = useBusStopDb();
-  const [triggerRefresh, setTriggerRefresh] = useState<boolean>(false);
-  const [activeBusAlerts, setActiveBusAlerts] = useState<BusAlert[]>([]);
-
-  const fetchBusAlerts = async () => {
-    const busAlertSettings = await getBusAlertSettings("");
-    setActiveBusAlerts(busAlertSettings);
-  };
-
-  useEffect(() => {
-    fetchBusAlerts();
-  }, []);
+  const {data} = useQuery(
+    ["savedBusAlerts"], // Unique key for the query
+    async (): Promise<any> => {
+      // Fetch saved alerts
+      const busAlertSettings = await getBusAlertSettings("");
+      // console.log("All alerts checked!");
+      return busAlertSettings;
+    },
+    {
+      enabled: true,
+      refetchInterval: 500, // Refetch every 0.5 seconds
+      onError: () => {
+        console.error("Error fetching bus alerts");
+      },
+      // onSuccess: () => {
+      //   console.log("Alerts checked successfully");
+      // },
+    }
+  );
 
   const renderSavedBusAlerts = ({ item }: { item: BusAlert }) => {
-    const reFetchBusAlerts = async () => {
-      if (triggerRefresh) {
-        await fetchBusAlerts();
-        setTriggerRefresh(false);
-      }
-    };
-    reFetchBusAlerts();
 
     return (
       <View className="mb-4">
@@ -79,13 +82,13 @@ const SavedBusAlertsScreen: React.FC<SavedBusAlertsScreenProps> = ({navigation})
   };
 
   const renderSavedBusAlertsList = () => {
-    if (activeBusAlerts) {
-      if (activeBusAlerts.length !== 0) {
+    if (data != undefined) {
+      if (data.length !== 0) {
         return (
           <View className="w-full h-3/4 bg-transparent rounded-xl">
             <SwipeListView
               className="w-full h-full mt-3 bg-slate-600 rounded-xl p-3 overflow-y-auto"
-              data={activeBusAlerts}
+              data={data}
               renderItem={renderSavedBusAlerts}
               keyExtractor={(item) => item.busNumber + item.busstopId}
               renderHiddenItem={({ item }: { item: BusAlert }) => (
@@ -96,7 +99,15 @@ const SavedBusAlertsScreen: React.FC<SavedBusAlertsScreenProps> = ({navigation})
                     onPress={async () => {
                       // console.log("Deleting alert for bus", item.busNumber);
                       removeBusAlertSettings(item.busstopId, item.busNumber);
-                      setTriggerRefresh(true);
+                      Toast.show("Deleted alert for bus " + item.busNumber, {
+                        position: Toast.positions.BOTTOM,
+                        shadow: true,
+                        animation: true,
+                        hideOnPress: true,
+                        delay: 0,
+                        backgroundColor: "rgba(0,0,0,0.7)",
+                        textColor: "white",
+                      });
                     }}
                   >
                     <MaterialIcons name="delete" size={34} color="white" />

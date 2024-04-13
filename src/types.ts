@@ -13,6 +13,7 @@ interface BusStop {
   Description: string;
   Latitude: number;
   Longitude: number;
+  BusServices: string[];
 }
 
 type BusStopMap = Map<string, BusStop>;
