@@ -18,14 +18,14 @@ A SG-based bus arrival mobile app with a focus on delivering push notifications 
 
 #### Basic Functionality
 
-<p float="left">
+<p align="center" padding="50px">
 <img alt="quick_search_functionality" src="app_showcase/v1.2.0/quick_search_functionality.gif">
 <img alt="swipe_to_delete_functionality" src="app_showcase/v1.2.0/swipe_to_delete_functionality.gif">
 </p>
 
 #### Google Maps Integration
 
-<p float="left">
+<p align="center">
 <img alt="basic_map_functionality" src="app_showcase/v1.2.0/basic_map_functionality.gif">
 <img alt="map_search_functionality" src="app_showcase/v1.2.0/map_search_functionality.gif">
 </p>
@@ -34,11 +34,13 @@ A SG-based bus arrival mobile app with a focus on delivering push notifications 
 
 #### Main Screen
 
+<p align="center">
 <img alt="main_screen" src="app_showcase/v1.2.0/main_screen.jpg" width="150">
+</p>
 
 #### Key UI features
 
-<p float="left">
+<p align="center">
 <img alt="bus_service_dashboard" src="app_showcase/v1.1.0/bus_service_dashboard.jpg" width="150">  
 <img alt="set_alert_modal" src="app_showcase/v1.1.0/set_alert_modal.jpg" width="150">  
 <img alt="saved_bus_alerts" src="app_showcase/v1.1.0/saved_bus_alerts.jpg" width="150">  
@@ -48,7 +50,9 @@ A SG-based bus arrival mobile app with a focus on delivering push notifications 
 
 #### Notifications
 
+<p align="center">
 <img alt="notifications" src="app_showcase/v1.1.0/notifications.jpg" width="250">
+</p>
 
 ## APK Release
 
